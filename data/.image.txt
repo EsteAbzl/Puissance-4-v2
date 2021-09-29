@@ -1,0 +1,167 @@
+﻿image faite: 21 / 87
+
+fullscreen:.
+
+w: | 158 | retour[200] | 150 | grille9x8[904] | 150 | jaugeTemps[200] | 158|
+   | 158 | retour[200] | 250 | grille7x6[704] | 250 | jaugeTemps[200] | 158|
+   | 508 | 904 | 508 |
+   | 608 | 704 | 608 |
+    1920
+
+
+h: | 88 | colonneActive[100] | grille9x8[804] | 88 |
+   | 188 | colonneActive[100] | grille7x6[604] | 188 |
+   | 88 | 904 | 88 |
+   | 188 | 704 | 188 |
+    1080
+
+
+fenetre de jeu:
+
+w: | 50 | retour[200] | 50 | grille9x8[904] | 50 | jaugeTemps[200] | 50|
+   | 50 | retour[200] | 150 | grille7x6[704] | 150 | jaugeTemps[200] | 50|
+   | 300 | 904 | 300 |
+   | 400 | 704 | 400 |
+   1504  78.333% de l'ecran
+
+
+h: | colonneActive[100] | grille9x8[804] |
+   | 100 | colonneActive[100] | grille7x6[604] | 100 |
+   | 904 |
+   | 100 | 704 | 100 |
+    904  83.7%
+   
+PARAMÈTRE
+
+background
+w: 6*x/8
+h: 5*y/8 
+
+joueurCommence
+
+background
+w: 600
+h: 400
+
+case:
+w: 400
+h: 100
+
+mode HARDCORE
+
+w:400
+h:200
+
+HARDCORE: off (violet sombre)
+HARDCORE: on 1 (rouge vif)
+HARDCORE: on 2 (rouge vif / violet vif / noir)
+
+hardcore bg
+
+w: 200
+h: 600
+
+hardcore case de temps
+
+w: 150
+h: 35
+
+pion:
+
+w: 98
+h: 98
+
+
+grille7x6:
+
+w: 704
+h: 604
+
+3|98|2|98|2|98|2|98|2|98|2|98|2|98|3
+
+3
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+3
+
+
+grille9x8:
+
+w: 904
+h: 804
+
+3|98|2|98|2|98|2|98|2|98|2|98|2|98|2|98|2|98|3
+
+3
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+2
+—
+98
+—
+3
+
+caseGrillage:
+
+w: 2
+h: 2
+
+joueur:
+
+w: 50
+h: 50
+
+joueur actif:
+
+w: 75
+h: 75
+
+
+goblin avec des ailes 
+lapin avec des chalumaux a la place des oreilles
