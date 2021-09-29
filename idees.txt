@@ -1,0 +1,276 @@
+﻿
+---------- BUG
+
+	affichage du mode hardcore avec les bots
+
+	pouvoir quitter pendant l'animation du pion
+
+	ralentisemment dans les parametres
+
+		-----------
+
+			-fichier de sauvegarde
+
+			-mode hardcore
+
+
+---------- SYSTEME
+
+passer les images en fps illimité
+
+OPTI:
+	refaire le système d'event: reunir tout les event en une seule boucle avec un seul event.
+	refaire le système d'affichage: mettre le "refresh" à un seul endroit et placer les image
+		a l'aide de petites fonctions dédiées.
+	
+lisibilitée:
+	bien placer les crocher apres les condition.
+	enlever les crocher et bien placer les break des switch(). 
+
+        ----------
+
+        -reset le fichier fSauvegarde a chaque partie
+
+        -trier les images dans le fichiers data
+
+        -!!! fermer correctemet le fichier fDebug, mettre sa fermeture dans "fermerFenetre"
+
+        -faire une stucture case
+
+        -verifier le dest des image ou on le cree en dehors de l'image(w, h)
+
+        -/!\/!\/!\ erreur pour "4alligne", elle ne prend pas en compte les pions qui viennent d'etres joue
+
+        -changer le nom de SDL_Event
+
+        -decrire le code:
+            .main
+            .video
+            .jeu
+            .grille
+            .bot
+            .event
+            .action
+
+		-laisser alloue les textures des images pendant certaine partie de jeu (acceuil, jeu, menu, fin)
+		fonction chargeSection(section a charger)
+		fonction chargeImage("location", SDL_Renderer* pRenderer, FILE* fDebug)
+
+		if(texturePion == NULL)
+		{
+		cree texture
+		}
+
+		if(texturePion != NULL)
+		{
+		desalloue texture
+		}
+
+		-actualiser le jeu derriere pour qu'il reste affiché
+
+
+		-changer l'affichage des images, faire une fonction
+		image("fichier de l'image", &dest, pRenderer, fDebug);.
+
+		-faire une stucture 
+        case avec:
+            int joueur; 
+                    /*
+                    0 = case vide
+                    1 = joueur 1
+                    2 = joueur 2
+                    3 = joueur 3
+                    */
+            int statut; 
+                    /*
+                    0 = case vide
+                    1 = normal
+                    2 = vient d'être joue
+                    3 = gagne
+                    */
+        pion avec:
+                x
+                y
+                velocite
+                        /*
+                        vitesse y
+                        positifs si le pion monte
+                        negatif si il tombe
+                        */
+
+
+---------- GAMEPLAY
+
+
+	-pouvoir accelerer dans le mode 4
+
+	-mettre les commandes clavier
+
+	-mettre de la musique
+
+	-faire de bonnes images
+
+	-mode fenetre
+
+	-bien organiser les images pour la fenetre
+
+	-menu parametre ( joueurCommence  / volume musique / volume effets / volume general)
+
+	- [bot] choisir aléatoirement parmis les colonnes capté dans 2 aligné et 3 aligné (comme pour les stratégies)
+
+	
+
+	
+
+	STRATEGIE:
+		  /!\: a faire 
+
+		0       | -     * |       -   |       0 |         0 |       0 |
+		x -     | - 0 0 0 |   0 0 - 0 | 0 - 0 0 |       0 x |     0 x |
+		0 - 0 0 | x x 0 x |   0 x x x | x - 0 s | 0 - 0 0 s | - 0 0 0 |
+  		x - x 0 | * s x 0 | 0 x s s s | 0 s s s | s - s s s | - s s s |
+		----------------------------------/!\--------/!\--------/!\----
+		      0 | *       |           | 0       | 0         | 0       |
+		    - x | 0 0 0 - | 0 - 0 0   | 0 0 - 0 | x 0       | x 0     |
+		0 0 - 0 | x 0 x x | x x x 0   | s 0 - x | s 0 0 - 0 | 0 0 0 - |
+		0 x - x | 0 x s * | s s s x 0 | s s s 0 | s s s - s | s s s - |
+
+		les cases pas encore remplie sont blacklist, si le bot ne peut pas placer de pion strategique,
+		il passe au puissance 2 puis au random pour remplir les 's' (suports)
+
+
+		etape:
+
+			trouve une strat
+			-> joue la strat
+			joue la strat
+			->strat impossible
+			-->trouve une strat
+			--->joue la nouvelle strat
+
+		jouer une strat:
+
+			analyse si la strat est tjrs possible
+			gestion des colonnes que la trat peut blacklist par elle même. 
+			Si colonne est blacklist, on verifie si c'est prévu en regardant le joueur -> la colonne -> la ligne
+			si c'est prévu, on continue la stratégie.
+
+			-> cherche ligne par ligne les colonnes qu'elle peut jouer
+			--> les joue en en choisissant une au hazard
+			-> si aucune colonnes est jouable pour l'instant, elle sont blacklist SAUF si cela rempli complètement la blacklist.
+
+
+	----------
+
+	        -faire un fichier de sauvegarde temporaire de la partie en cour afin de pouvoir faire un retour en arriere
+	        -ne pas oublier la fleche "ctrl + Z"
+
+	        -mettre un pion de la couleur du joueur quand il passe son curseur au dessus d'une colonne
+
+	        -faire echap fait apparaître le menu de fin, avec le bouton "continuer" en plus
+
+	        -régler le grillage
+
+	        -montrer le joueur qui doit jouer par des petites images, le joueur le plus en haut doit jouer, elles se situe au-dessus de jeu_retour
+
+	        -pouvoir retourner au menu, ou changer de mode, ou quitter a la fin d'une partie
+
+	        -accueil 0 = "appuyer sur n'importe quelle touche pour jouer"
+
+	        -pouvoir retourner en arrière
+
+	        -gérer les événements de colonne
+
+	        -faire une animation de pour le menu
+
+	        -pouvoir retourner au menu, recommencer une partie, ou quitter
+
+	        -pouvoir activer dans le menu la possibilitee de mettre une limite de temps pour jouer: mode HARDCORE : 15 secondes
+
+	        -faire une structure de vélocité des pions et une fonction pour faire l'animation de chute (et de rebond)
+
+			-hardcode 1: 10 sec
+				  2: 5 sec
+
+			-appel du menu a n'importe quel moment du jeu
+
+			- verifier _ - * - _ 
+
+			-faire une animation de pour le menu:
+            faire une "grille" qui tombe ligne par ligne 
+             \ / \ / \ / \ / \ / \ /
+            ""¤"""¤"""¤"""¤"""¤"""¤"
+            / \ / \ / \ / \ / \ / \
+            ¤...¤...¤...¤...¤...¤...¤
+
+			-faire des strategies pour les bots
+
+			-faire un tableau "blackliste" repertoriant les cases que le bot ne doit pas jouer
+
+			-mettre le jeu en pause quand on le reduit
+
+
+---------- IMAGES
+
+	creer des themes:
+	normal
+	medieval
+	futuriste 
+
+	bg de jeu
+
+	animmation du chargement
+
+		----------
+
+		persos
+
+		icone menu
+		bouttons menu
+
+		grille de jeu
+
+		grillage
+
+
+
+
+
+---------- AUTRE
+
+
+	finir le cour pour gérer les evenement
+
+	59 frames = 1,003 sec 
+	une sec en + tout les 333 sec
+
+	trouve strat:
+		trouve une strat de la plus entamé a la moins
+
+		modifie strat.type (forme de la stratégie)
+				strat.colonne (colonne du pion inférieur gauche de la strategie)
+				strat.ligne (ligne du pion inférieur gauche de la strategie)
+
+		sinon, laise strat.type a 0
+
+	strategie:
+		applique la stratégie engagée
+
+		
+
+		si la stratégie est compromise par la blackliste, elle annule complétemment la strat
+	    => strat.type = 0
+
+	    !!!dans certain cas, on peut braver la blackliste:  
+	    														   !
+	    														   !
+	    													       -   |
+															   0 0 - 0 |
+															   0 x ! x |
+															 0 x s s s | 
+
+	    si ne peut pas jouer, returne 0
+
+	faire attention a ce que l'aléatoire ne joue pas sur la stratégie.
+			
+			
