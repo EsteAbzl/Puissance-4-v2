@@ -50,5 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# autre
+
 puissance 4.layout
 puissance 4.depend
+.cbp
+.save
