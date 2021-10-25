@@ -27,8 +27,7 @@ void fenetre(FILE* fDebug, FILE* fSauvegarde)
     int fenetreW = 1920, fenetreH = 1080;
 
 
-     if(SDL_Init(SDL_INIT_VIDEO) != 0)                                                      // initialisation de la partie video de SDL
-    {
+    if(SDL_Init(SDL_INIT_VIDEO) != 0){                                                      // initialisation de la partie video de SDL
         fprintf(fDebug,"Échec de l'initialisation de la SDL (%s)\n",SDL_GetError());
         exit(-2);
     }
@@ -44,15 +43,12 @@ void fenetre(FILE* fDebug, FILE* fSauvegarde)
     SDL_SetWindowInputFocus(pWindow);
 
 
-    if(pWindow)
-    {
+    if(pWindow){
 
-
-
-        SDL_Renderer *pRenderer = SDL_CreateRenderer(pWindow,-1,SDL_RENDERER_ACCELERATED);  // pRenderer
-        if(pRenderer)
-        {
-            SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);                          // clean le renderer
+        SDL_Renderer *pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);  // pRenderer
+        if(pRenderer){
+            // clean le renderer
+            SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
             SDL_RenderClear(pRenderer);
             SDL_RenderPresent(pRenderer);
             debugWindow_Affiche();
@@ -61,26 +57,16 @@ void fenetre(FILE* fDebug, FILE* fSauvegarde)
                                                                                             // video
             jeu(pWindow, pRenderer, fDebug, fSauvegarde);                                   // corp du jeu
 
-
-
-
-
         }
-        else
-        {
+        else{
             fprintf(fDebug,"Erreur d'initialisation de pRenderer (%s)",SDL_GetError());
             exit(-4);
         }
-
     }
-    else
-    {
+    else{
         fprintf(fDebug,"Erreur de création de la fenêtre: %s\n",SDL_GetError());
         exit(-3);
     }
-
-
-
 }
 
 // desallocation
@@ -104,7 +90,6 @@ void fermetureFenetre(Images* Images, SDL_Window* pWindow, SDL_Renderer* pRender
     fclose(fDebug);                 // fermeture du fichier 'fDebug'
 
     fclose(fSauvegarde);            // fermeture et suppression du fichier 'fSauvegarde'
-    remove("./data/sauvegarde.txt");
 
     exit(0);
 }

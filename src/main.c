@@ -21,8 +21,7 @@ int main(int argc, char** argv)
     //initialisation du fichier d'erreur ('fDebug')
     fDebug = NULL;
 
-    if((fDebug = fopen("./Debug/erreur.txt","w+")) == NULL)
-    {
+    if((fDebug = fopen("./Debug/erreur.txt","w+")) == NULL){
         fprintf(stdin,"ERREUR: impossible d'ouvrir le fichier 'erreur.txt'\n");
         return -1;
     }
@@ -31,8 +30,7 @@ int main(int argc, char** argv)
     //initialisation du fichier de sauvegarde de la partie ('fSauvegarde')
     FILE *fSauvegarde = NULL;
 
-    if((fSauvegarde = fopen("./data/sauvegarde.txt","w+")) == NULL)
-    {
+    if((fSauvegarde = fopen("./data/sauvegarde.txt","w+")) == NULL){
         fprintf(fDebug, "ERREUR: impossible d'ouvrir le fichier 'fSauvegarde.txt'");
         return -1;
     }
