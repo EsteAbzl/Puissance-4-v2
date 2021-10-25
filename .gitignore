@@ -55,5 +55,8 @@ dkms.conf
 
 puissance 4.layout
 puissance 4.depend
-.cbp
-.save
+*.cbp
+*.save
+*.o
+erreur.txt
+data\sauvegarde.txt
