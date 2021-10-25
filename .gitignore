@@ -60,3 +60,8 @@ puissance 4.depend
 *.o
 erreur.txt
 data\sauvegarde.txt
+Debug/erreur.txt
+data/sauvegarde.txt
+Debug/erreur.txt
+*.o
+Debug/src/bot.o
