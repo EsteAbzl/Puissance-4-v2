@@ -65,3 +65,4 @@ data/sauvegarde.txt
 Debug/erreur.txt
 *.o
 Debug/src/bot.o
+Debug/erreur.txt

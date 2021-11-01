@@ -4,282 +4,178 @@
 
 #include <SDL2/SDL.h>
 
-// AUTRE
-typedef struct Autre Autre;
-struct Autre
-{
-    SDL_Texture* croix;
-    SDL_Texture* CHARGEMENT;
-};
+#define NBR_IMAGE 100 // 91
+#define D_SECTION_AUTRE 1
+#define F_SECTION_AUTRE 20
+#define D_SECTION_ACCUEIL 21
+#define F_SECTION_ACCUEIL 42
+#define D_SECTION_JEU 43
+#define F_SECTION_JEU 90
 
 
-
-// NOMBRES
-typedef struct Nombres Nombres;
-struct Nombres
-{
-    SDL_Texture* nb_0;
-    SDL_Texture* nb_1;
-    SDL_Texture* nb_2;
-    SDL_Texture* nb_3;
-    SDL_Texture* nb_4;
-    SDL_Texture* nb_5;
-    SDL_Texture* nb_6;
-    SDL_Texture* nb_7;
-    SDL_Texture* nb_8;
-    SDL_Texture* nb_9;
-};
+typedef enum Section{
+    AUTRE, ACCUEIL, JEU
+}Section;
 
 
-
-// PARAMETRE
-typedef struct JoueurCommence JoueurCommence;
-struct JoueurCommence
-{
-    SDL_Texture* joueurCommence_bg;
-
-    SDL_Texture* joueur1Commence;
-    SDL_Texture* joueur2Commence;
-    SDL_Texture* joueur3Commence;
-
-    SDL_Texture* joueur1Commence_actif;
-    SDL_Texture* joueur2Commence_actif;
-    SDL_Texture* joueur3Commence_actif;
-};
-
-typedef struct Parametre Parametre;
-struct Parametre
-{
-    SDL_Texture* parametre_logo;
-    SDL_Texture* parametre_bg;
-
-    JoueurCommence JoueurCommence;
-};
+typedef enum Centre{
+    OUI = 2, NON = 0
+}Centre;
 
 
+typedef enum En_Image{
+    chargement,
 
-// MENU
-typedef struct Grillage Grillage;
-struct Grillage
-{
-    SDL_Texture* menu_Grillage;
-    SDL_Texture* menu_Grillage1;
-    SDL_Texture* menu_Grillage2;
-    SDL_Texture* menu_BordureGrillage;
-};
+    // AUTRE
+    croix,
+    // nombres
+    nb_0,
+    nb_1,
+    nb_2,
+    nb_3,
+    nb_4,
+    nb_5,
+    nb_6,
+    nb_7,
+    nb_8,
+    nb_9,
+    // parametre
+    parametre_logo,
+    parametre_bg,
 
-typedef struct Bouton Bouton;
-struct Bouton
-{
-    SDL_Texture* menu_Reprendre;
-    SDL_Texture* menu_Rejouer;
-    SDL_Texture* menu_RetourAccueil;
-    SDL_Texture* menu_Quitter;
-};
+    joueurCommence_bg,
+    joueur1Commence,
+    joueur2Commence,
+    joueur3Commence,
+    joueur1Commence_actif,
+    joueur2Commence_actif,
+    joueur3Commence_actif,
 
-typedef struct Menu Menu;
-struct Menu
-{
-    SDL_Texture* menu_logo;
+    // ACCUEIL
+    accueil_bg,
+    accueil_retour,
+    accueil_valide,
 
-    Grillage Grillage;
+    //0
+    accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER,
 
-    Bouton Bouton;
-};
-
-
-// ACCUEIL
-typedef struct Accueil_0 Accueil_0;
-struct Accueil_0
-{
-    SDL_Texture* accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER;
-    SDL_Texture* accueil_jouer;
-};
-
-typedef struct Accueil_1 Accueil_1;
-struct Accueil_1
-{
+    //1
     // hardcore
-    SDL_Texture* hardcore_inactif;
-    SDL_Texture* hardcore_1;
-    SDL_Texture* hardcore_2;
-
+    hardcore_inactif,
+    hardcore_1,
+    hardcore_2,
     // mode
-    SDL_Texture* accueil_mode1;
-    SDL_Texture* accueil_mode2;
-    SDL_Texture* accueil_mode3;
-    SDL_Texture* accueil_mode4;
-};
+    accueil_mode1,
+    accueil_mode2,
+    accueil_mode3,
+    accueil_mode4,
 
-typedef struct Accueil_2 Accueil_2;
-struct Accueil_2
-{
+    //2
     // autre
-    SDL_Texture* accueil_SELECTIONNEZ_UNE_DIFFICULTEE;
-    SDL_Texture* accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface;
-
+    accueil_SELECTIONNEZ_UNE_DIFFICULTEE,
+    accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface,
     // background
-    SDL_Texture* accueil_botJaune;
-    SDL_Texture* accueil_botRouge;
-    SDL_Texture* accueil_bot_inactif;
-
+    accueil_botJaune,
+    accueil_botRouge,
+    accueil_bot_inactif,
     // bot actif
-    SDL_Texture* accueil_botFacile_actif;
-    SDL_Texture* accueil_botNormal_actif;
-    SDL_Texture* accueil_botDifficile_actif;
-
+    accueil_botFacile_actif,
+    accueil_botNormal_actif,
+    accueil_botDifficile_actif,
     // bot inactif
-    SDL_Texture* accueil_botFacile_inactif;
-    SDL_Texture* accueil_botNormal_inactif;
-    SDL_Texture* accueil_botDifficile_inactif;
-};
+    accueil_botFacile_inactif,
+    accueil_botNormal_inactif,
+    accueil_botDifficile_inactif,
 
-typedef struct Accueil Accueil;
-struct Accueil
-{
-    SDL_Texture* accueil_bg;
-    SDL_Texture* accueil_retour;
-    SDL_Texture* accueil_valide;
+    // JEU
+    // menu
+    menu_logo,
 
-    Accueil_0 Accueil_0;
-    Accueil_1 Accueil_1;
-    Accueil_2 Accueil_2;
+    menu_Grillage,
+    menu_Grillage1,
+    menu_Grillage2,
+    menu_BordureGrillage,
 
-};
+    menu_Reprendre,
+    menu_Rejouer,
+    menu_RetourAccueil,
+    menu_Quitter,
 
+    //jeu
+    jeu_bg,
+    jeu_retour,
 
+    grille7x6,
+    grille9x8,
 
-// JEU
-typedef struct Joueur Joueur;
-struct Joueur
-{
+    hardcore_bg,
+    hardcore_Temps_Vert,
+    hardcore_Temps_Orange,
+    hardcore_Temps_Rouge,
+
     // normal
-    SDL_Texture* joueur1;
-    SDL_Texture* joueur2;
-    SDL_Texture* joueur3;
-    SDL_Texture* bot1;
-    SDL_Texture* bot2;
-
+    joueur1,
+    joueur2,
+    joueur3,
+    bot1,
+    bot2,
     // actif
-    SDL_Texture* joueur1_actif;
-    SDL_Texture* joueur2_actif;
-    SDL_Texture* joueur3_actif;
-    SDL_Texture* bot1_actif;
-    SDL_Texture* bot2_actif;
-};
+    joueur1_actif,
+    joueur2_actif,
+    joueur3_actif,
+    bot1_actif,
+    bot2_actif,
 
-typedef struct Grille Grille;
-struct Grille
-{
-    SDL_Texture* grille7x6;
-    SDL_Texture* grille9x8;
-};
+    jeu_Colonne_Desactive,
+    jeu_ColonneTaille1_Active,
+    jeu_ColonneTaille2_Active,
+    jeu_ColonneTaille3_Active,
+    jeu_ColonneTaille4_Active,
+    jeu_ColonneTaille5_Active,
+    jeu_ColonneTaille6_Active,
+    jeu_ColonneTaille7_Active,
+    jeu_ColonneTaille8_Active,
 
-typedef struct Hardcore_ Hardcore_;
-struct Hardcore_
-{
-    SDL_Texture* hardcore_bg;
-
-    SDL_Texture* hardcore_Temps_Vert;
-    SDL_Texture* hardcore_Temps_Orange;
-    SDL_Texture* hardcore_Temps_Rouge;
-};
-
-typedef struct Colonne Colonne;
-struct Colonne
-{
-    SDL_Texture* jeu_Colonne_Desactive;
-
-    SDL_Texture* jeu_ColonneTaille1_Active;
-    SDL_Texture* jeu_ColonneTaille2_Active;
-    SDL_Texture* jeu_ColonneTaille3_Active;
-    SDL_Texture* jeu_ColonneTaille4_Active;
-    SDL_Texture* jeu_ColonneTaille5_Active;
-    SDL_Texture* jeu_ColonneTaille6_Active;
-    SDL_Texture* jeu_ColonneTaille7_Active;
-    SDL_Texture* jeu_ColonneTaille8_Active;
-};
-
-typedef struct Pions Pions;
-struct Pions
-{
     // normal
-    SDL_Texture* pion1;
-    SDL_Texture* pion2;
-    SDL_Texture* pion3;
-
+    pion1,
+    pion2,
+    pion3,
     // joue
-    SDL_Texture* pion1_joue;
-    SDL_Texture* pion2_joue;
-    SDL_Texture* pion3_joue;
-
+    pion1_joue,
+    pion2_joue,
+    pion3_joue,
     // gagne
-    SDL_Texture* pion1_gagne;
-    SDL_Texture* pion2_gagne;
-    SDL_Texture* pion3_gagne;
-};
+    pion1_gagne,
+    pion2_gagne,
+    pion3_gagne,
 
-typedef struct Jeu Jeu;
-struct Jeu
-{
-    SDL_Texture* jeu_bg;
-    SDL_Texture* jeu_retour;
+    // FIN
+    fin_LE_JOUEUR,
+    fin_GAGNE,
+    fin_EGALITE,
 
-    Joueur Joueur;
+}En_Image;
 
-    Grille Grille;
+typedef struct InfoImage{
+    SDL_Texture* pTexture;
+    char localisation[100]; //localisation est la l'emplacement de l'image a charger dans les fichiers
 
-    Hardcore_ Hardcore_;
+    int temps;  // permet de faire des animations
+} InfoImage;
 
-    Colonne Colonne;
+typedef struct Image{       // structure qui stoque les données des images en mémoire
+    int section_autre, section_acceuil, section_jeu;
+    InfoImage image[NBR_IMAGE];
 
-    Pions Pions;
-};
-
-
-
-// FIN
-typedef struct Fin Fin;
-struct Fin
-{
-    SDL_Texture* fin_LE_JOUEUR;
-    SDL_Texture* fin_GAGNE;
-    SDL_Texture* fin_EGALITE;
-};
+} Image;
 
 
-// structure qui stoque l'adresse des images en mémoire
-typedef struct Images Images;
-struct Images
-{
-    Autre Autre;
+void Image_localisation(Image* images); // attribue la localisation de chaques images
+void res_Image(Image* images);
 
-    Nombres Nombres;
-
-    Parametre Parametre;
-
-    Menu Menu;
-
-    Accueil Accueil;
-
-    Jeu Jeu;
-
-    Fin Fin;
-};
-
-
-void changeDest(SDL_Rect* dest, int x, int y);
-
-
-// charge une image et renvoit un pointeur dessus
-SDL_Texture* chargeImage(const char* localisation, SDL_Renderer* pRenderer, FILE* fDebug);
-
-// supprime (si elle existe) la texture demande
-void supprimeTexture(SDL_Texture* pTexture);
-
-// affiche une texture a l'endroit demande
-void afficheImage(SDL_Texture* pTexture, SDL_Rect* dest, SDL_Renderer* pRenderer, FILE* fDebug);
-// affiche une texture a l'endroit demande en la centrant
-void afficheImage_Centre(SDL_Texture* pTexture, SDL_Rect* dest, SDL_Renderer* pRenderer, FILE* fDebug);
+void chargeSectionImage(Section section, Image* images, SDL_Renderer* pRenderer, FILE* fDebug);     // charge une section d'image en mémoire
+void chargeImage(InfoImage* image, SDL_Renderer* pRenderer, FILE* fDebug);                          // charge une image en mémoire
+void supprimeTexture(SDL_Texture* pTexture);                                                        // supprime (si elle existe) la texture demande
+void afficheImage(SDL_Texture* pTexture, int* coordonnee, Centre centre, SDL_Renderer* pRenderer, FILE* fDebug);    // affiche une image (peut être centrée)
 
 #endif // ABZ_IMAGE

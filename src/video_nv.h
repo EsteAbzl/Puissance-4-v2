@@ -7,40 +7,23 @@
 
 
 // fenetre
-typedef enum Ecran{
-    CHARGEMENT, LENCEMENT, ACCUEIL_MENU, ACCUEIL_BOT, JEU
-}Ecran;
 
-
-typedef struct InfoFenetre{
-    SDL_Window* pWindow;
-
-    SDL_Renderer* pRenderer;
-
-    int w, h;
-
-    Ecran ecran;
-    int menu;
-    int parametre;
-
-
-} InfoFenetre;
-
-void res_InfoFenetre(InfoFenetre* fenetre);
 
 // cree la fenetre et le renderer, fait lien avec le corp du jeu
-void fenetre(FILE* fDebug);
+void fenetre(FILE* fDebug, FILE* fSauvegarde);
 // desalloue
-void fermetureFenetre(Image* Images, InfoFenetre* fenetre, FILE* fDebug, FILE* fSauvegarde);
+void fermetureFenetre(Images* Images, SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde);
 
 
 // image
 
 
 //reset la structure Images ( dans image.h)
-void res_Im_Images(Im_Images*);
+void resetImages(Images* Images);
 // charge les images de section du jeu
-void chargeSectionImage(int , Im_Images*, SDL_Renderer*, FILE*);
+void chargeSectionImage(int section, Images* Images, SDL_Renderer* pRenderer, FILE* fDebug);
+// decharge toutes les images du jeu
+void dechargeToutesImages(Images* Images);
 
 
 // action

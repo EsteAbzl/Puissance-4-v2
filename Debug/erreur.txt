@@ -1,27 +1,2 @@
-ressemblance 4
-choix 1: 0, 0, -1
-ERREUR :  choix 2: 1, 0, 1
-ERREUR :  choix 3: 2, 0, -1
-ERREUR :  choix 4: 3, 0, 1
-ERREUR :  ERREUR : 
-
-ERREUR : colonnes trouv√©e
-ERREUR : blacklist√©
-ERREUR : colonne jou√©e 
-ressemblance 5
-choix 1: 0, 1, 1
-ERREUR :  ERREUR : 
-
-ERREUR : colonnes trouv√©e
-ERREUR : blacklist√©
-ERREUR : colonne jou√©e 
-ressemblance 6
-choix 1: 0, 1, 1
-ERREUR :  choix 2: 3, 1, -1
-ERREUR :  ERREUR : 
-
-ERREUR : colonnes trouv√©e
-ERREUR : blacklist√©
-ERREUR : colonne jou√©e 
-Rapport de fin TTF: ˇ%¶£ 
+Rapport de fin TTF: ˇ%∂£ 
 Rapport de fin SDL: That operation is not supported 

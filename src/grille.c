@@ -12,7 +12,7 @@
 #include "jeu.h"
 
 // remet a zero la grille, la structure 'case'
-void resetGrille(caseGrille grille[9][9])
+void res_Grille(CaseGrille grille[9][9])
 {
 	   // pour toute la grille
     for(int i=0;i<9;i++)
