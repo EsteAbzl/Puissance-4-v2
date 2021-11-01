@@ -5,8 +5,7 @@
 #include <SDL2/SDL.h>
 
 // corp du jeu
-void fonctionJeu(SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde);
-
+void jeu(SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde);
 
 // compose la grille
 typedef struct CaseGrille{
@@ -27,7 +26,7 @@ typedef struct CaseGrille{
                 3 = gagne
                 */
 
-} CaseGrille;
+} caseGrille;
 
 // gere le mode hardcore
 typedef struct Hardcore{
@@ -42,8 +41,6 @@ typedef struct Hardcore{
    	int tempsRestant;
 } Hardcore;
 
-void res_Hardcore(Hardcore* hardcore);
-
 typedef struct Pion{
 	   int x;// milieu du pion sur l'axe x
 
@@ -56,61 +53,26 @@ typedef struct Pion{
 	                 ! important ! avec SDL, si on fait y + 30, le pion va descendre de 30 pixels,
 	                 il faut donc inverser et faire y - velociteY pour ne pas avoir d'erreurs.
 	                 */
-} Pion;
+} pion;
 
 
 typedef struct Strat{
-    int colonne;    // colonne du pion inférieur gauche de la strategie
+	   int colonne;// colonne du pion inférieur gauche de la strategie
 
-    int ligne;      // ligne du pion inférieur gauche de la strategie
+	   int ligne;// ligne du pion inférieur gauche de la strategie
 
-    int type;       /*
-                    strategie utilisée
+	   int type;/*
+                    strategie utilisee
 
                     type est negatif pour itilisé la stratégie en "miroir"
-                    */
-} Strat;
-
-void res_Strat(Strat* strat);
-
-typedef struct Bot{
-    Strat strat;
-
-    int difficulte;     /*
-                        1 : facile
-                        2 : normal
-                        3 : difficile
-                        */
-} Bot;
-
-void res_Bot(Bot* bot);
+                */
+} strat;
 
 
-typedef struct InfoJeu{
-    CaseGrille grille[9][9];// grille de jeu
-
-    FILE* fSauvegarde;
-
+typedef struct Game{
     Hardcore hardcore;
 
-    int mode;   /*
-                1 : Joueur contre Joueur
-                2 : Joueur contre Ordinateur
-                3 : Joueur contre Joueur contre Joueur
-                4 : Ordinateur contre Ordinateur
-                */
 
-    Bot bot1, bot2;
-
-    int joueurCommence;
-    int joueur; // joueur actuel
-
-    int colonne;// colonne jouee
-    int tour;   // incremente a chaques tours, permet de detecter une egalite
-
-} InfoJeu;
-
-void res_InfoJeu(InfoJeu* jeu);
-
+} game;
 
 #endif // ABZ_JEU

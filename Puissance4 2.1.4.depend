@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1610848664 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.c
+1610845064 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.c
 	<SDL2/SDL.h>
 	<stdio.h>
 	<stdlib.h>
@@ -8,7 +8,7 @@
 	"video.h"
 	"image.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl.h
 	"SDL_main.h"
 	"SDL_stdinc.h"
 	"SDL_assert.h"
@@ -42,12 +42,12 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_main.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_main.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_stdinc.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_stdinc.h
 	"SDL_config.h"
 	<sys/types.h>
 	<stdio.h>
@@ -76,27 +76,27 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_config.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_config.h
 	"SDL_platform.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_platform.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_platform.h
 	"AvailabilityMacros.h"
 	"TargetConditionals.h"
 	<winapifamily.h>
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\begin_code.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\begin_code.h
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\close_code.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\close_code.h
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_assert.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_assert.h
 	"SDL_config.h"
 	"begin_code.h"
 	<signal.h>
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_atomic.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_atomic.h
 	"SDL_stdinc.h"
 	"SDL_platform.h"
 	"begin_code.h"
@@ -104,7 +104,7 @@
 	<mbarrier.h>
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_audio.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_audio.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_endian.h"
@@ -114,25 +114,25 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_error.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_error.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_endian.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_endian.h
 	"SDL_stdinc.h"
 	<endian.h>
 	<endian.h>
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_mutex.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_mutex.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_thread.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_thread.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_atomic.h"
@@ -143,18 +143,18 @@
 	<stdlib.h>
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_rwops.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_rwops.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_clipboard.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_clipboard.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_cpuinfo.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_cpuinfo.h
 	"SDL_stdinc.h"
 	<intrin.h>
 	<intrin.h>
@@ -173,7 +173,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_events.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_events.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -187,7 +187,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_video.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_video.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -195,13 +195,13 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_pixels.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_pixels.h
 	"SDL_stdinc.h"
 	"SDL_endian.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_rect.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_rect.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_pixels.h"
@@ -209,7 +209,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_surface.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_surface.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -218,11 +218,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_blendmode.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_blendmode.h
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_keyboard.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_keyboard.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_keycode.h"
@@ -230,27 +230,27 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_keycode.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_keycode.h
 	"SDL_stdinc.h"
 	"SDL_scancode.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_scancode.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_scancode.h
 	"SDL_stdinc.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_mouse.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_mouse.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_joystick.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_joystick.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_gamecontroller.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_gamecontroller.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_rwops.h"
@@ -258,11 +258,11 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_quit.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_quit.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_gesture.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_gesture.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
@@ -270,71 +270,71 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_touch.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_touch.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_filesystem.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_filesystem.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_haptic.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_haptic.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"SDL_joystick.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_hints.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_hints.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_loadso.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_loadso.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_log.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_log.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_messagebox.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_messagebox.h
 	"SDL_stdinc.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_metal.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_metal.h
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_power.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_power.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_render.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_render.h
 	"SDL_stdinc.h"
 	"SDL_rect.h"
 	"SDL_video.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_sensor.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_sensor.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_shape.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_shape.h
 	"SDL_stdinc.h"
 	"SDL_pixels.h"
 	"SDL_rect.h"
@@ -343,7 +343,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_system.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_system.h
 	"SDL_stdinc.h"
 	"SDL_keyboard.h"
 	"SDL_render.h"
@@ -351,55 +351,55 @@
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_timer.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_timer.h
 	"SDL_stdinc.h"
 	"SDL_error.h"
 	"begin_code.h"
 	"close_code.h"
 
-1583894369 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_version.h
+1583890769 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_version.h
 	"SDL_stdinc.h"
 	"begin_code.h"
 	"close_code.h"
 
-1627486953 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\debug.h
+1635190959 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\debug.h
 	<SDL2/SDL.h>
 	<SDL2/SDL_ttf.h>
 
-1547325890 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_ttf.h
+1547322290 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_ttf.h
 	"SDL.h"
 	"begin_code.h"
 	"close_code.h"
 
-1610849355 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.h
+1635199429 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.h
 	"jeu.h"
 	"image.h"
 
-1608408351 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\jeu.h
+1635284965 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\jeu.h
 	<SDL2/SDL.h>
 
-1608410703 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.h
+1635779841 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.h
 	<SDL2/SDL.h>
 
-1597854716 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.h
+1635777872 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.h
 	"jeu.h"
 	"image.h"
 
-1627495689 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\debug.c
+1627492089 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\debug.c
 	<SDL2/SDL.h>
 	<SDL2/SDL_ttf.h>
 	<stdio.h>
 	<stdlib.h>
 	"debug.h"
 
-1627494772 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.c
+1627491172 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.c
 	<SDL2/SDL.h>
 	<stdio.h>
 	<stdlib.h>
 	"event.h"
 	"action.h"
 
-1598184017 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.h
+1598180417 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.h
 	<SDL2/SDL.h>
 	"jeu.h"
 	"image.h"
@@ -418,7 +418,7 @@
 	"jeu.h"
 	"image.h"
 
-1597582906 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\icon.rc
+1597579306 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\icon.rc
 
 1622721492 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.c
 	<SDL2/SDL.h>
@@ -445,10 +445,10 @@
 	"image.h"
 	"event.h"
 
-1610501678 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.h
+1635194589 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.h
 	"jeu.h"
 
-1622832249 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.c
+1635166576 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.c
 	<SDL2/SDL_ttf.h>
 	<stdio.h>
 	<stdlib.h>
@@ -458,4 +458,26 @@
 	"video.h"
 
 1610842102 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.h
+
+1635164512 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.c
+	<stdio.h>
+	<string.h>
+	<math.h>
+	<time.h>
+	"bot.h"
+	"grille.h"
+	"jeu.h"
+	"debug.h"
+
+1635165739 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.c
+	<SDL2/SDL.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"debug.h"
+	"video.h"
+	"image.h"
+	"jeu.h"
+	"grille.h"
+	"event.h"
 

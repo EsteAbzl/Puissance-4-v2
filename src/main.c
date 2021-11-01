@@ -25,15 +25,7 @@ int main(int argc, char** argv)
         fprintf(stdin,"ERREUR: impossible d'ouvrir le fichier 'erreur.txt'\n");
         return -1;
     }
-    /*---*/
 
-    //initialisation du fichier de sauvegarde de la partie ('fSauvegarde')
-    FILE *fSauvegarde = NULL;
-
-    if((fSauvegarde = fopen("./data/sauvegarde.txt","w+")) == NULL){
-        fprintf(fDebug, "ERREUR: impossible d'ouvrir le fichier 'fSauvegarde.txt'");
-        return -1;
-    }
     /*---*/
 
 

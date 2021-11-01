@@ -5,9 +5,7 @@
 #include "jeu.h"
 
 
-typedef struct blkList blkList;
-struct blkList
-{
+typedef struct BlkList{
 
     int ligne;
 
@@ -26,7 +24,7 @@ struct blkList
                 */
 
 
-};
+} BlkList;
 
 
 // choisit une colonne de differentes façons selon la difficultee

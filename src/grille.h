@@ -6,7 +6,7 @@
 #include "image.h"
 
 // remet a zero la grille, la structure 'case'
-void resetGrille(caseGrille grille[9][9]);
+void res_Grille(CaseGrille grille[9][9]);
 
 // trouve a quelle case placer le pion, et le place
 int placePion(int joueur, int colonne, int mode, int tour, int *rejouerPartie, int *retourAccueil, int* joueurCommence, Hardcore* hardcore, caseGrille grille[9][9], Images* Images, SDL_Window *pWindow, SDL_Renderer *pRenderer, FILE *fDebug, FILE *fSauvegarde);

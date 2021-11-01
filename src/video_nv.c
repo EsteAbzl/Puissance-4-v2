@@ -21,52 +21,42 @@ Corp de la gestion de la fenetre.
 
 // fenetre
 
-void res_InfoFenetre(InfoFenetre* fenetre){
-    fenetre->pWindow = NULL;
-
-    fenetre->pRenderer = NULL;
-
-    fenetre->w = 0;
-    fenetre->h = 0;
-
-    fenetre->ecran = NULL;
-    fenetre->menu = 0;
-    fenetre->parametre = 0;
-}
-
-
 // cree la fenetre et le renderer, fait lien avec le corp du jeu
-void fenetre(FILE* fDebug)
+void fenetre(FILE* fDebug, FILE* fSauvegarde)
 {
     int fenetreW = 1920, fenetreH = 1080;
 
-    InfoFenetre fenetre;
-    res_InfoFenetre(&fenetre);
-
 
     if(SDL_Init(SDL_INIT_VIDEO) != 0){                                                      // initialisation de la partie video de SDL
-        fprintf(fDebug,"Ã‰chec de l'initialisation de la SDL (%s)\n",SDL_GetError());
+        fprintf(fDebug,"Échec de l'initialisation de la SDL (%s)\n",SDL_GetError());
         exit(-2);
     }
-                                                            // creation de la fenetre
-    fenetre.pWindow = SDL_CreateWindow("Puissance4 2.0",SDL_WINDOWPOS_UNDEFINED,
+
+
+    SDL_Window *pWindow = NULL;                                                             // creation de la fenetre
+    pWindow = SDL_CreateWindow("Puissance4 2.0",SDL_WINDOWPOS_UNDEFINED,
                                                 SDL_WINDOWPOS_UNDEFINED,
                                                 fenetreW,
                                                 fenetreH,
                                                 SDL_WINDOW_SHOWN);
 
+    SDL_SetWindowInputFocus(pWindow);
+
+
     if(pWindow){
-        fenetre.pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);  // pRenderer
-        if(fenetre.pRenderer){
+
+        SDL_Renderer *pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);  // pRenderer
+        if(pRenderer){
             // clean le renderer
-            SDL_SetRenderDrawColor(fenetre.pRenderer, 255, 255, 255, 255);
-            SDL_RenderClear(fenetre.pRenderer);
-            SDL_RenderPresent(fenetre.pRenderer);
+            SDL_SetRenderDrawColor(pRenderer, 255, 255, 255, 255);
+            SDL_RenderClear(pRenderer);
+            SDL_RenderPresent(pRenderer);
             debugWindow_Affiche();
 
-            SDL_GetRendererOutputSize(fenetre.pRenderer, &fenetre.w, &fenetre.h);
 
-            fonctionJeu(&fenetre, fDebug);  // corp du jeu
+                                                                                            // video
+            jeu(pWindow, pRenderer, fDebug, fSauvegarde);                                   // corp du jeu
+
         }
         else{
             fprintf(fDebug,"Erreur d'initialisation de pRenderer (%s)",SDL_GetError());
@@ -74,15 +64,15 @@ void fenetre(FILE* fDebug)
         }
     }
     else{
-        fprintf(fDebug,"Erreur de crÃ©ation de la fenÃªtre: %s\n",SDL_GetError());
+        fprintf(fDebug,"Erreur de création de la fenêtre: %s\n",SDL_GetError());
         exit(-3);
     }
 }
 
 // desallocation
-void fermetureFenetre(Image* Images, InfoFenetre* fenetre, FILE* fDebug, FILE* fSauvegarde)
+void fermetureFenetre(Images* Images, SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde)
 {
-    res_Image(images); // destuction de toutes les textures pour la fermeture du jeu
+    dechargeToutesImages(Images); // destuction de toutes les textures pour la fermeture du jeu
 
     fprintf(fDebug,"Rapport de fin TTF: %s \n", TTF_GetError); // exprime un message d'erreur
 
@@ -91,9 +81,9 @@ void fermetureFenetre(Image* Images, InfoFenetre* fenetre, FILE* fDebug, FILE* f
 
     fprintf(fDebug,"Rapport de fin SDL: %s \n", SDL_GetError()); // exprime un message d'erreur
 
-    SDL_DestroyRenderer(fenetre.pRenderer); // desallocation du renderer
+    SDL_DestroyRenderer(pRenderer); // desallocation du renderer
 
-    SDL_DestroyWindow(fenetre.pWindow);     // desallocation de la fenetre
+    SDL_DestroyWindow(pWindow);     // desallocation de la fenetre
 
     SDL_Quit();                     // arret de SDL
 
@@ -106,447 +96,768 @@ void fermetureFenetre(Image* Images, InfoFenetre* fenetre, FILE* fDebug, FILE* f
 
 // image
 
+//reset la structure Images ( dans image.h)
+void resetImages(Images* Images)
+{
+    // AUTRE
+        Images->Autre.croix = NULL;
+        Images->Autre.CHARGEMENT = NULL;
+
+
+    // NOMBRES
+        Images->Nombres.nb_0 = NULL;
+        Images->Nombres.nb_1 = NULL;
+        Images->Nombres.nb_2 = NULL;
+        Images->Nombres.nb_3 = NULL;
+        Images->Nombres.nb_4 = NULL;
+        Images->Nombres.nb_5 = NULL;
+        Images->Nombres.nb_6 = NULL;
+        Images->Nombres.nb_7 = NULL;
+        Images->Nombres.nb_8 = NULL;
+        Images->Nombres.nb_9 = NULL;
+
+
+    // PARAMETRE
+        Images->Parametre.parametre_logo = NULL;
+        Images->Parametre.parametre_bg = NULL;
+
+        Images->Parametre.JoueurCommence.joueurCommence_bg = NULL;
+
+        Images->Parametre.JoueurCommence.joueur1Commence = NULL;
+        Images->Parametre.JoueurCommence.joueur1Commence_actif = NULL;
+        Images->Parametre.JoueurCommence.joueur2Commence = NULL;
+        Images->Parametre.JoueurCommence.joueur2Commence_actif = NULL;
+        Images->Parametre.JoueurCommence.joueur3Commence = NULL;
+        Images->Parametre.JoueurCommence.joueur3Commence_actif = NULL;
+
+
+    // MENU
+
+        Images->Menu.menu_logo = NULL;
+
+        Images->Menu.Grillage.menu_Grillage = NULL;
+        Images->Menu.Grillage.menu_Grillage1 = NULL;
+        Images->Menu.Grillage.menu_Grillage2 = NULL;
+        Images->Menu.Grillage.menu_BordureGrillage = NULL;
+
+        Images->Menu.Bouton.menu_Reprendre = NULL;
+        Images->Menu.Bouton.menu_Rejouer = NULL;
+        Images->Menu.Bouton.menu_RetourAccueil = NULL;
+        Images->Menu.Bouton.menu_Quitter = NULL;
+
+
+    // ACCUEIL
+        Images->Accueil.accueil_bg = NULL;
+        Images->Accueil.accueil_retour = NULL;
+        Images->Accueil.accueil_valide = NULL;
+
+        // 0
+        Images->Accueil.Accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER = NULL;
+        Images->Accueil.Accueil_0.accueil_jouer = NULL;
+
+        // 1
+        Images->Accueil.Accueil_1.hardcore_inactif = NULL;
+        Images->Accueil.Accueil_1.hardcore_1 = NULL;
+        Images->Accueil.Accueil_1.hardcore_2 = NULL;
+
+        Images->Accueil.Accueil_1.accueil_mode1 = NULL;
+        Images->Accueil.Accueil_1.accueil_mode2 = NULL;
+        Images->Accueil.Accueil_1.accueil_mode3 = NULL;
+        Images->Accueil.Accueil_1.accueil_mode4 = NULL;
+
+        // 2
+        Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE = NULL;
+        Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface = NULL;
+
+        Images->Accueil.Accueil_2.accueil_botJaune = NULL;
+        Images->Accueil.Accueil_2.accueil_botRouge = NULL;
+        Images->Accueil.Accueil_2.accueil_bot_inactif = NULL;
+
+        Images->Accueil.Accueil_2.accueil_botFacile_actif = NULL;
+        Images->Accueil.Accueil_2.accueil_botNormal_actif = NULL;
+        Images->Accueil.Accueil_2.accueil_botDifficile_actif = NULL;
+
+        Images->Accueil.Accueil_2.accueil_botFacile_inactif = NULL;
+        Images->Accueil.Accueil_2.accueil_botNormal_inactif = NULL;
+        Images->Accueil.Accueil_2.accueil_botDifficile_inactif = NULL;
+
+
+    // JEU
+        Images->Jeu.jeu_bg = NULL;
+        Images->Jeu.jeu_retour = NULL;
+
+        // joueur
+        Images->Jeu.Joueur.joueur1 = NULL;
+        Images->Jeu.Joueur.joueur2 = NULL;
+        Images->Jeu.Joueur.joueur3 = NULL;
+        Images->Jeu.Joueur.bot1 = NULL;
+        Images->Jeu.Joueur.bot2 = NULL;
+
+        Images->Jeu.Joueur.joueur1_actif = NULL;
+        Images->Jeu.Joueur.joueur2_actif = NULL;
+        Images->Jeu.Joueur.joueur3_actif = NULL;
+        Images->Jeu.Joueur.bot1_actif = NULL;
+        Images->Jeu.Joueur.bot2_actif = NULL;
+
+        // grille
+        Images->Jeu.Grille.grille7x6 = NULL;
+        Images->Jeu.Grille.grille9x8 = NULL;
+
+        // hardcore
+        Images->Jeu.Hardcore_.hardcore_bg = NULL;
+
+        Images->Jeu.Hardcore_.hardcore_Temps_Vert = NULL;
+        Images->Jeu.Hardcore_.hardcore_Temps_Orange = NULL;
+        Images->Jeu.Hardcore_.hardcore_Temps_Rouge = NULL;
+
+        // colonne
+        Images->Jeu.Colonne.jeu_Colonne_Desactive = NULL;
+
+        Images->Jeu.Colonne.jeu_ColonneTaille1_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille2_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille3_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille4_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille5_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille6_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille7_Active = NULL;
+        Images->Jeu.Colonne.jeu_ColonneTaille8_Active = NULL;
+
+        // pions
+        Images->Jeu.Pions.pion1 = NULL;
+        Images->Jeu.Pions.pion2 = NULL;
+        Images->Jeu.Pions.pion3 = NULL;
+
+        Images->Jeu.Pions.pion1_joue = NULL;
+        Images->Jeu.Pions.pion2_joue = NULL;
+        Images->Jeu.Pions.pion3_joue = NULL;
+
+        Images->Jeu.Pions.pion1_gagne = NULL;
+        Images->Jeu.Pions.pion2_gagne = NULL;
+        Images->Jeu.Pions.pion3_gagne = NULL;
+
+    // FIN
+        Images->Fin.fin_LE_JOUEUR = NULL;
+        Images->Fin.fin_GAGNE = NULL;
+        Images->Fin.fin_EGALITE = NULL;
+
+
+}
 
 // charge les images de section du jeu
-void chargeSectionImage(Section section, Im_Images* images, SDL_Renderer* pRenderer, FILE* fDebug)
+void chargeSectionImage(int section, Images* Images, SDL_Renderer* pRenderer, FILE* fDebug)
 {
+    /*
+    section:
+    -1: priorite a l'image 'chargement'
+    1: accueil
+    2: jeu
+    */
+
+    if(section == -1)
+    {
+        Images->Autre.CHARGEMENT = chargeImage("./data/autre/CHARGEMENT.png", pRenderer, fDebug);
+    }
+
+    if(section != -1)
+    {
+        // chargement des images globales
+        if(Images->Autre.croix == NULL)// si elles ne sont pas chargee
+        {
+            Images->Autre.croix = chargeImage("./data/autre/croix.png", pRenderer, fDebug);
+
+
+            // NOMBRES
+            Images->Nombres.nb_0 = chargeImage("./data/nombre/nb_0.png", pRenderer, fDebug);
+            Images->Nombres.nb_1 = chargeImage("./data/nombre/nb_1.png", pRenderer, fDebug);
+            Images->Nombres.nb_2 = chargeImage("./data/nombre/nb_2.png", pRenderer, fDebug);
+            Images->Nombres.nb_3 = chargeImage("./data/nombre/nb_3.png", pRenderer, fDebug);
+            Images->Nombres.nb_4 = chargeImage("./data/nombre/nb_4.png", pRenderer, fDebug);
+            Images->Nombres.nb_5 = chargeImage("./data/nombre/nb_5.png", pRenderer, fDebug);
+            Images->Nombres.nb_6 = chargeImage("./data/nombre/nb_6.png", pRenderer, fDebug);
+            Images->Nombres.nb_7 = chargeImage("./data/nombre/nb_7.png", pRenderer, fDebug);
+            Images->Nombres.nb_8 = chargeImage("./data/nombre/nb_8.png", pRenderer, fDebug);
+            Images->Nombres.nb_9 = chargeImage("./data/nombre/nb_9.png", pRenderer, fDebug);
+
+
+            // PARAMETRE
+            Images->Parametre.parametre_logo = chargeImage("./data/parametre/autre/parametre_logo.png", pRenderer, fDebug);
+            Images->Parametre.parametre_bg = chargeImage("./data/parametre/autre/parametre_bg.png", pRenderer, fDebug);
+
+            Images->Parametre.JoueurCommence.joueurCommence_bg = chargeImage("./data/parametre/joueurCommence/joueurCommence_bg.png", pRenderer, fDebug);
+
+            Images->Parametre.JoueurCommence.joueur1Commence = chargeImage("./data/parametre/joueurCommence/joueur1Commence.png", pRenderer, fDebug);
+            Images->Parametre.JoueurCommence.joueur1Commence_actif = chargeImage("./data/parametre/joueurCommence/joueur1Commence_actif.png", pRenderer, fDebug);
+            Images->Parametre.JoueurCommence.joueur2Commence = chargeImage("./data/parametre/joueurCommence/joueur2Commence.png", pRenderer, fDebug);
+            Images->Parametre.JoueurCommence.joueur2Commence_actif = chargeImage("./data/parametre/joueurCommence/joueur2Commence_actif.png", pRenderer, fDebug);
+            Images->Parametre.JoueurCommence.joueur3Commence = chargeImage("./data/parametre/joueurCommence/joueur3Commence.png", pRenderer, fDebug);
+            Images->Parametre.JoueurCommence.joueur3Commence_actif = chargeImage("./data/parametre/joueurCommence/joueur3Commence_actif.png", pRenderer, fDebug);
+
+        }
+
+
+        // chargement des images du menu
+        if(section == 1 && Images->Accueil.accueil_bg == NULL)
+        {
+
+            // ACCUEIL
+            Images->Accueil.accueil_bg = chargeImage("./data/accueil/autre/accueil_bg.png", pRenderer, fDebug);
+            Images->Accueil.accueil_retour = chargeImage("./data/accueil/autre/accueil_retour.png", pRenderer, fDebug);
+            Images->Accueil.accueil_valide = chargeImage("./data/accueil/autre/accueil_valide.png", pRenderer, fDebug);
+
+            // 0
+            Images->Accueil.Accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER = chargeImage("./data/accueil/autre/accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER.png", pRenderer, fDebug);
+
+            // 1
+            Images->Accueil.Accueil_1.hardcore_inactif = chargeImage("./data/accueil/hardcore/hardcore_inactif.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_1.hardcore_1 = chargeImage("./data/accueil/hardcore/hardcore_1.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_1.hardcore_2 = chargeImage("./data/accueil/hardcore/hardcore_2.png", pRenderer, fDebug);
+
+            Images->Accueil.Accueil_1.accueil_mode1 = chargeImage("./data/accueil/mode/accueil_mode1.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_1.accueil_mode2 = chargeImage("./data/accueil/mode/accueil_mode2.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_1.accueil_mode3 = chargeImage("./data/accueil/mode/accueil_mode3.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_1.accueil_mode4 = chargeImage("./data/accueil/mode/accueil_mode4.png", pRenderer, fDebug);
+
+            // 2
+            Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE = chargeImage("./data/accueil/bot/SELECTIONNEZ_UNE_DIFFICULTEE.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface = chargeImage("./data/accueil/bot/SELECTIONNEZ_UNE_DIFFICULTEE_efface.png", pRenderer, fDebug);
+
+            Images->Accueil.Accueil_2.accueil_botJaune = chargeImage("./data/accueil/bot/accueil_botJaune.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_botRouge = chargeImage("./data/accueil/bot/accueil_botRouge.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_bot_inactif = chargeImage("./data/accueil/bot/accueil_bot_inactif.png", pRenderer, fDebug);
+
+            Images->Accueil.Accueil_2.accueil_botFacile_actif = chargeImage("./data/accueil/bot/accueil_botFacile_actif.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_botNormal_actif = chargeImage("./data/accueil/bot/accueil_botNormal_actif.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_botDifficile_actif = chargeImage("./data/accueil/bot/accueil_botDifficile_actif.png", pRenderer, fDebug);
+
+            Images->Accueil.Accueil_2.accueil_botFacile_inactif = chargeImage("./data/accueil/bot/accueil_botFacile_inactif.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_botNormal_inactif = chargeImage("./data/accueil/bot/accueil_botNormal_inactif.png", pRenderer, fDebug);
+            Images->Accueil.Accueil_2.accueil_botDifficile_inactif = chargeImage("./data/accueil/bot/accueil_botDifficile_inactif.png", pRenderer, fDebug);
+
+        }
+       // si les images de l'acceuil sont charge alors que le programme est dans la section du jeu alors on les supprimes
+        else if(section != 1 && Images->Accueil.accueil_bg != NULL)
+        {
+            // ACCUEIL
+            supprimeTexture(Images->Accueil.accueil_bg);
+            supprimeTexture(Images->Accueil.accueil_retour);
+            supprimeTexture(Images->Accueil.accueil_valide);
+
+            // 0
+            supprimeTexture(Images->Accueil.Accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER);
+            supprimeTexture(Images->Accueil.Accueil_0.accueil_jouer);
+
+            // 1
+            supprimeTexture(Images->Accueil.Accueil_1.hardcore_inactif);
+            supprimeTexture(Images->Accueil.Accueil_1.hardcore_1);
+            supprimeTexture(Images->Accueil.Accueil_1.hardcore_2);
 
+            supprimeTexture(Images->Accueil.Accueil_1.accueil_mode1);
+            supprimeTexture(Images->Accueil.Accueil_1.accueil_mode2);
+            supprimeTexture(Images->Accueil.Accueil_1.accueil_mode3);
+            supprimeTexture(Images->Accueil.Accueil_1.accueil_mode4);
+
+            // 2
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface);
+
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botJaune);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botRouge);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_bot_inactif);
+
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botFacile_actif);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botNormal_actif);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botDifficile_actif);
+
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botFacile_inactif);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botNormal_inactif);
+            supprimeTexture(Images->Accueil.Accueil_2.accueil_botDifficile_inactif);
+
+
+            // ACCUEIL
+            Images->Accueil.accueil_bg = NULL;
+            Images->Accueil.accueil_retour = NULL;
+            Images->Accueil.accueil_valide = NULL;
+
+            // 0
+            Images->Accueil.Accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER = NULL;
+            Images->Accueil.Accueil_0.accueil_jouer = NULL;
+
+            // 1
+            Images->Accueil.Accueil_1.hardcore_inactif = NULL;
+            Images->Accueil.Accueil_1.hardcore_1 = NULL;
+            Images->Accueil.Accueil_1.hardcore_2 = NULL;
+
+            Images->Accueil.Accueil_1.accueil_mode1 = NULL;
+            Images->Accueil.Accueil_1.accueil_mode2 = NULL;
+            Images->Accueil.Accueil_1.accueil_mode3 = NULL;
+            Images->Accueil.Accueil_1.accueil_mode4 = NULL;
+
+            // 2
+            Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE = NULL;
+            Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface = NULL;
+
+            Images->Accueil.Accueil_2.accueil_botJaune = NULL;
+            Images->Accueil.Accueil_2.accueil_botRouge = NULL;
+            Images->Accueil.Accueil_2.accueil_bot_inactif = NULL;
+
+            Images->Accueil.Accueil_2.accueil_botFacile_actif = NULL;
+            Images->Accueil.Accueil_2.accueil_botNormal_actif = NULL;
+            Images->Accueil.Accueil_2.accueil_botDifficile_actif = NULL;
+
+            Images->Accueil.Accueil_2.accueil_botFacile_inactif = NULL;
+            Images->Accueil.Accueil_2.accueil_botNormal_inactif = NULL;
+            Images->Accueil.Accueil_2.accueil_botDifficile_inactif = NULL;
+        }
+
+
+        // chargement des images du jeu
+        if(section == 2 && Images->Menu.Grillage.menu_Grillage == NULL)
+        {
+
+            // MENU
+
+            Images->Menu.menu_logo = chargeImage("./data/menu/autre/menu_logo.png", pRenderer, fDebug);
+
+            Images->Menu.Grillage.menu_Grillage = chargeImage("./data/menu/grillage/menu_Grillage.png", pRenderer, fDebug);
+            Images->Menu.Grillage.menu_Grillage1 = chargeImage("./data/menu/grillage/menu_Grillage1.png", pRenderer, fDebug);
+            Images->Menu.Grillage.menu_Grillage2 = chargeImage("./data/menu/grillage/menu_Grillage2.png", pRenderer, fDebug);
+            Images->Menu.Grillage.menu_BordureGrillage = chargeImage("./data/menu/grillage/menu_BordureGrillage.png", pRenderer, fDebug);
+
+            Images->Menu.Bouton.menu_Reprendre = chargeImage("./data/menu/bouton/menu_Reprendre.png", pRenderer, fDebug);
+            Images->Menu.Bouton.menu_Rejouer = chargeImage("./data/menu/bouton/menu_Rejouer.png", pRenderer, fDebug);
+            Images->Menu.Bouton.menu_RetourAccueil = chargeImage("./data/menu/bouton/menu_RetourAccueil.png", pRenderer, fDebug);
+            Images->Menu.Bouton.menu_Quitter = chargeImage("./data/menu/bouton/menu_Quitter.png", pRenderer, fDebug);
+
+
+            // JEU
+            Images->Jeu.jeu_bg = chargeImage("./data/jeu/autre/jeu_bg.png", pRenderer, fDebug);
+            Images->Jeu.jeu_retour = chargeImage("./data/jeu/autre/jeu_retour.png", pRenderer, fDebug);
+
+            // joueur
+            Images->Jeu.Joueur.joueur1 = chargeImage("./data/jeu/joueur/joueur1.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.joueur2 = chargeImage("./data/jeu/joueur/joueur2.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.joueur3 = chargeImage("./data/jeu/joueur/joueur3.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.bot1 = chargeImage("./data/jeu/joueur/bot1.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.bot2 = chargeImage("./data/jeu/joueur/bot2.png", pRenderer, fDebug);
+
+            Images->Jeu.Joueur.joueur1_actif = chargeImage("./data/jeu/joueur/joueur1_actif.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.joueur2_actif = chargeImage("./data/jeu/joueur/joueur2_actif.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.joueur3_actif = chargeImage("./data/jeu/joueur/joueur3_actif.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.bot1_actif = chargeImage("./data/jeu/joueur/bot1_actif.png", pRenderer, fDebug);
+            Images->Jeu.Joueur.bot2_actif = chargeImage("./data/jeu/joueur/bot2_actif.png", pRenderer, fDebug);
+
+            // grille
+            Images->Jeu.Grille.grille7x6 = chargeImage("./data/jeu/grille/grille7x6.png", pRenderer, fDebug);
+            Images->Jeu.Grille.grille9x8 = chargeImage("./data/jeu/grille/grille9x8.png", pRenderer, fDebug);
+
+            // hardcore
+            Images->Jeu.Hardcore_.hardcore_bg = chargeImage("./data/jeu/hardcore/hardcore_bg.png", pRenderer, fDebug);
+
+            Images->Jeu.Hardcore_.hardcore_Temps_Vert = chargeImage("./data/jeu/hardcore/hardcore_Temps_Vert.png", pRenderer, fDebug);
+            Images->Jeu.Hardcore_.hardcore_Temps_Orange = chargeImage("./data/jeu/hardcore/hardcore_Temps_Orange.png", pRenderer, fDebug);
+            Images->Jeu.Hardcore_.hardcore_Temps_Rouge = chargeImage("./data/jeu/hardcore/hardcore_Temps_Rouge.png", pRenderer, fDebug);
+
+            // colonne
+            Images->Jeu.Colonne.jeu_Colonne_Desactive = chargeImage("./data/jeu/colonne/jeu_Colonne_Desactive.png", pRenderer, fDebug);
+
+            Images->Jeu.Colonne.jeu_ColonneTaille1_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille1_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille2_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille2_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille3_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille3_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille4_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille4_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille5_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille5_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille6_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille6_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille7_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille7_Active.png", pRenderer, fDebug);
+            Images->Jeu.Colonne.jeu_ColonneTaille8_Active = chargeImage("./data/jeu/colonne/jeu_ColonneTaille8_Active.png", pRenderer, fDebug);
+
+            // pion
+            Images->Jeu.Pions.pion1 = chargeImage("./data/jeu/pion/pion1.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion2 = chargeImage("./data/jeu/pion/pion2.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion3 = chargeImage("./data/jeu/pion/pion3.png", pRenderer, fDebug);
 
+            Images->Jeu.Pions.pion1_joue = chargeImage("./data/jeu/pion/pion1_joue.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion2_joue = chargeImage("./data/jeu/pion/pion2_joue.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion3_joue = chargeImage("./data/jeu/pion/pion3_joue.png", pRenderer, fDebug);
 
-        case ACCEUIL:   // chargement des images du menu
-            if(images->section_acceuil == 0){
-                images->section_acceuil = 1;
-
-                // ACCUEIL
-                images->accueil.accueil_bg = chargeImage("./data/accueil/autre/accueil_bg.png", pRenderer, fDebug);
-                images->accueil.accueil_retour = chargeImage("./data/accueil/autre/accueil_retour.png", pRenderer, fDebug);
-                images->accueil.accueil_valide = chargeImage("./data/accueil/autre/accueil_valide.png", pRenderer, fDebug);
-
-                // 0
-                images->accueil.accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER = chargeImage("./data/accueil/autre/accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER.png", pRenderer, fDebug);
-
-                // 1
-                images->accueil.accueil_1.hardcore_inactif = chargeImage("./data/accueil/hardcore/hardcore_inactif.png", pRenderer, fDebug);
-                images->accueil.accueil_1.hardcore_1 = chargeImage("./data/accueil/hardcore/hardcore_1.png", pRenderer, fDebug);
-                images->accueil.accueil_1.hardcore_2 = chargeImage("./data/accueil/hardcore/hardcore_2.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion1_gagne = chargeImage("./data/jeu/pion/pion1_gagne.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion2_gagne = chargeImage("./data/jeu/pion/pion2_gagne.png", pRenderer, fDebug);
+            Images->Jeu.Pions.pion3_gagne = chargeImage("./data/jeu/pion/pion3_gagne.png", pRenderer, fDebug);
 
-                images->accueil.accueil_1.accueil_mode1 = chargeImage("./data/accueil/mode/accueil_mode1.png", pRenderer, fDebug);
-                images->accueil.accueil_1.accueil_mode2 = chargeImage("./data/accueil/mode/accueil_mode2.png", pRenderer, fDebug);
-                images->accueil.accueil_1.accueil_mode3 = chargeImage("./data/accueil/mode/accueil_mode3.png", pRenderer, fDebug);
-                images->accueil.accueil_1.accueil_mode4 = chargeImage("./data/accueil/mode/accueil_mode4.png", pRenderer, fDebug);
 
-                // 2
-                images->accueil.accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE = chargeImage("./data/accueil/bot/SELECTIONNEZ_UNE_DIFFICULTEE.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface = chargeImage("./data/accueil/bot/SELECTIONNEZ_UNE_DIFFICULTEE_efface.png", pRenderer, fDebug);
+            // FIN
+            Images->Fin.fin_LE_JOUEUR = chargeImage("./data/fin/texte/fin_LE_JOUEUR.png", pRenderer, fDebug);
+            Images->Fin.fin_GAGNE = chargeImage("./data/fin/texte/fin_GAGNE.png", pRenderer, fDebug);
+            Images->Fin.fin_EGALITE = chargeImage("./data/fin/texte/fin_EGALITE.png", pRenderer, fDebug);
 
-                images->accueil.accueil_2.accueil_botJaune = chargeImage("./data/accueil/bot/accueil_botJaune.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_botRouge = chargeImage("./data/accueil/bot/accueil_botRouge.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_bot_inactif = chargeImage("./data/accueil/bot/accueil_bot_inactif.png", pRenderer, fDebug);
+        }
+        //si les images du jeu sont charge alors que le programme est dans la section de l'accueil alors on les supprimes
+        else if(section != 2 && Images->Menu.Grillage.menu_BordureGrillage != NULL)
+        {
 
-                images->accueil.accueil_2.accueil_botFacile_actif = chargeImage("./data/accueil/bot/accueil_botFacile_actif.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_botNormal_actif = chargeImage("./data/accueil/bot/accueil_botNormal_actif.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_botDifficile_actif = chargeImage("./data/accueil/bot/accueil_botDifficile_actif.png", pRenderer, fDebug);
+            // MENU
 
-                images->accueil.accueil_2.accueil_botFacile_inactif = chargeImage("./data/accueil/bot/accueil_botFacile_inactif.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_botNormal_inactif = chargeImage("./data/accueil/bot/accueil_botNormal_inactif.png", pRenderer, fDebug);
-                images->accueil.accueil_2.accueil_botDifficile_inactif = chargeImage("./data/accueil/bot/accueil_botDifficile_inactif.png", pRenderer, fDebug);
-            }
-            if(image->section_jeu){ //si les images du jeu sont charge alors que le programme est dans la section de l'accueil alors on les supprimes
-                images->section_jeu = 0;
+            supprimeTexture(Images->Menu.menu_logo);
 
-                // MENU
-                supprimeTexture(images->menu.menu_logo);
+            supprimeTexture(Images->Menu.Grillage.menu_Grillage);
+            supprimeTexture(Images->Menu.Grillage.menu_Grillage1);
+            supprimeTexture(Images->Menu.Grillage.menu_Grillage2);
+            supprimeTexture(Images->Menu.Grillage.menu_BordureGrillage);
 
-                supprimeTexture(images->menu.grillage.menu_grillage);
-                supprimeTexture(images->menu.grillage.menu_grillage1);
-                supprimeTexture(images->menu.grillage.menu_grillage2);
-                supprimeTexture(images->menu.grillage.menu_Borduregrillage);
+            supprimeTexture(Images->Menu.Bouton.menu_Reprendre);
+            supprimeTexture(Images->Menu.Bouton.menu_Rejouer);
+            supprimeTexture(Images->Menu.Bouton.menu_RetourAccueil);
+            supprimeTexture(Images->Menu.Bouton.menu_Quitter);
 
-                supprimeTexture(images->menu.bouton.menu_Reprendre);
-                supprimeTexture(images->menu.bouton.menu_Rejouer);
-                supprimeTexture(images->menu.bouton.menu_RetourAccueil);
-                supprimeTexture(images->menu.bouton.menu_Quitter);
+            // JEU
+            supprimeTexture(Images->Jeu.jeu_bg);
+            supprimeTexture(Images->Jeu.jeu_retour);
+            // joueur
+            supprimeTexture(Images->Jeu.Joueur.joueur1);
+            supprimeTexture(Images->Jeu.Joueur.joueur2);
+            supprimeTexture(Images->Jeu.Joueur.joueur3);
+            supprimeTexture(Images->Jeu.Joueur.bot1);
+            supprimeTexture(Images->Jeu.Joueur.bot2);
 
-                // JEU
-                supprimeTexture(images->jeu.jeu_bg);
-                supprimeTexture(images->jeu.jeu_retour);
-                // joueur
-                supprimeTexture(images->jeu.joueur.joueur1);
-                supprimeTexture(images->jeu.joueur.joueur2);
-                supprimeTexture(images->jeu.joueur.joueur3);
-                supprimeTexture(images->jeu.joueur.bot1);
-                supprimeTexture(images->jeu.joueur.bot2);
+            supprimeTexture(Images->Jeu.Joueur.joueur1_actif);
+            supprimeTexture(Images->Jeu.Joueur.joueur2_actif);
+            supprimeTexture(Images->Jeu.Joueur.joueur3_actif);
+            supprimeTexture(Images->Jeu.Joueur.bot1_actif);
+            supprimeTexture(Images->Jeu.Joueur.bot2_actif);
 
-                supprimeTexture(images->jeu.joueur.joueur1_actif);
-                supprimeTexture(images->jeu.joueur.joueur2_actif);
-                supprimeTexture(images->jeu.joueur.joueur3_actif);
-                supprimeTexture(images->jeu.joueur.bot1_actif);
-                supprimeTexture(images->jeu.joueur.bot2_actif);
+            // grille
+            supprimeTexture(Images->Jeu.Grille.grille7x6);
+            supprimeTexture(Images->Jeu.Grille.grille9x8);
 
-                // grille
-                supprimeTexture(images->jeu.grille.grille7x6);
-                supprimeTexture(images->jeu.grille.grille9x8);
+            // hardcore
+            supprimeTexture(Images->Jeu.Hardcore_.hardcore_bg);
+
+            supprimeTexture(Images->Jeu.Hardcore_.hardcore_Temps_Vert);
+            supprimeTexture(Images->Jeu.Hardcore_.hardcore_Temps_Orange);
+            supprimeTexture(Images->Jeu.Hardcore_.hardcore_Temps_Rouge);
+
+            // colonne
+            supprimeTexture(Images->Jeu.Colonne.jeu_Colonne_Desactive);
+
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille1_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille2_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille3_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille4_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille5_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille6_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille7_Active);
+            supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille8_Active);
+
+            // pions
+            supprimeTexture(Images->Jeu.Pions.pion1);
+            supprimeTexture(Images->Jeu.Pions.pion2);
+            supprimeTexture(Images->Jeu.Pions.pion3);
+
+            supprimeTexture(Images->Jeu.Pions.pion1_joue);
+            supprimeTexture(Images->Jeu.Pions.pion2_joue);
+            supprimeTexture(Images->Jeu.Pions.pion3_joue);
+
+            supprimeTexture(Images->Jeu.Pions.pion1_gagne);
+            supprimeTexture(Images->Jeu.Pions.pion2_gagne);
+            supprimeTexture(Images->Jeu.Pions.pion3_gagne);
+
+
+            // FIN
+            supprimeTexture(Images->Fin.fin_LE_JOUEUR);
+            supprimeTexture(Images->Fin.fin_GAGNE);
+            supprimeTexture(Images->Fin.fin_EGALITE);
+
+
+
+//
+
+
+            // MENU
+
+            Images->Menu.menu_logo = NULL;
+
+            Images->Menu.Grillage.menu_Grillage = NULL;
+            Images->Menu.Grillage.menu_Grillage1 = NULL;
+            Images->Menu.Grillage.menu_Grillage2 = NULL;
+            Images->Menu.Grillage.menu_BordureGrillage = NULL;
+
+            Images->Menu.Bouton.menu_Reprendre = NULL;
+            Images->Menu.Bouton.menu_Rejouer = NULL;
+            Images->Menu.Bouton.menu_RetourAccueil = NULL;
+            Images->Menu.Bouton.menu_Quitter = NULL;
+
+
+
+            // JEU
+            Images->Jeu.jeu_bg = NULL;
+            Images->Jeu.jeu_retour = NULL;
+
+            // joueur
+            Images->Jeu.Joueur.joueur1 = NULL;
+            Images->Jeu.Joueur.joueur2 = NULL;
+            Images->Jeu.Joueur.joueur3 = NULL;
+            Images->Jeu.Joueur.bot1 = NULL;
+            Images->Jeu.Joueur.bot2 = NULL;
+
+            Images->Jeu.Joueur.joueur1_actif = NULL;
+            Images->Jeu.Joueur.joueur2_actif = NULL;
+            Images->Jeu.Joueur.joueur3_actif = NULL;
+            Images->Jeu.Joueur.bot1_actif = NULL;
+            Images->Jeu.Joueur.bot2_actif = NULL;
+
+            // grille
+            Images->Jeu.Grille.grille7x6 = NULL;
+            Images->Jeu.Grille.grille9x8 = NULL;
+
+            // hardcore
+            Images->Jeu.Hardcore_.hardcore_bg = NULL;
+
+            Images->Jeu.Hardcore_.hardcore_Temps_Vert = NULL;
+            Images->Jeu.Hardcore_.hardcore_Temps_Orange = NULL;
+            Images->Jeu.Hardcore_.hardcore_Temps_Rouge = NULL;
+
+            // colonne
+            Images->Jeu.Colonne.jeu_Colonne_Desactive = NULL;
+
+            Images->Jeu.Colonne.jeu_ColonneTaille1_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille2_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille3_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille4_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille5_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille6_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille7_Active = NULL;
+            Images->Jeu.Colonne.jeu_ColonneTaille8_Active = NULL;
+
+            // pions
+            Images->Jeu.Pions.pion1 = NULL;
+            Images->Jeu.Pions.pion2 = NULL;
+            Images->Jeu.Pions.pion3 = NULL;
+
+            Images->Jeu.Pions.pion1_joue = NULL;
+            Images->Jeu.Pions.pion2_joue = NULL;
+            Images->Jeu.Pions.pion3_joue = NULL;
+
+            Images->Jeu.Pions.pion1_gagne = NULL;
+            Images->Jeu.Pions.pion2_gagne = NULL;
+            Images->Jeu.Pions.pion3_gagne = NULL;
+
+            // FIN
+            Images->Fin.fin_LE_JOUEUR = NULL;
+            Images->Fin.fin_GAGNE = NULL;
+            Images->Fin.fin_EGALITE = NULL;
+        }
 
-                // hardcore
-                supprimeTexture(images->jeu.hardcore.hardcore_bg);
-
-                supprimeTexture(images->jeu.hardcore.hardcore_Temps_Vert);
-                supprimeTexture(images->jeu.hardcore.hardcore_Temps_Orange);
-                supprimeTexture(images->jeu.hardcore.hardcore_Temps_Rouge);
-
-                // colonne
-                supprimeTexture(images->jeu.colonne.jeu_colonne_Desactive);
-
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille1_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille2_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille3_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille4_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille5_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille6_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille7_Active);
-                supprimeTexture(images->jeu.colonne.jeu_colonneTaille8_Active);
-
-                // pions
-                supprimeTexture(images->jeu.pions.pion1);
-                supprimeTexture(images->jeu.pions.pion2);
-                supprimeTexture(images->jeu.pions.pion3);
-
-                supprimeTexture(images->jeu.pions.pion1_joue);
-                supprimeTexture(images->jeu.pions.pion2_joue);
-                supprimeTexture(images->jeu.pions.pion3_joue);
-
-                supprimeTexture(images->jeu.pions.pion1_gagne);
-                supprimeTexture(images->jeu.pions.pion2_gagne);
-                supprimeTexture(images->jeu.pions.pion3_gagne);
-
-
-                // FIN
-                supprimeTexture(images->fin.fin_LE_JOUEUR);
-                supprimeTexture(images->fin.fin_GAGNE);
-                supprimeTexture(images->fin.fin_EGALITE);
-
-
-
-        //
-
-
-                /*// MENU
-
-                images->menu.menu_logo = NULL;
-
-                images->menu.grillage.menu_grillage = NULL;
-                images->menu.grillage.menu_grillage1 = NULL;
-                images->menu.grillage.menu_grillage2 = NULL;
-                images->menu.grillage.menu_Borduregrillage = NULL;
-
-                images->menu.bouton.menu_Reprendre = NULL;
-                images->menu.bouton.menu_Rejouer = NULL;
-                images->menu.bouton.menu_RetourAccueil = NULL;
-                images->menu.bouton.menu_Quitter = NULL;
-
-
-
-                // JEU
-                images->jeu.jeu_bg = NULL;
-                images->jeu.jeu_retour = NULL;
-
-                // joueur
-                images->jeu.joueur.joueur1 = NULL;
-                images->jeu.joueur.joueur2 = NULL;
-                images->jeu.joueur.joueur3 = NULL;
-                images->jeu.joueur.bot1 = NULL;
-                images->jeu.joueur.bot2 = NULL;
-
-                images->jeu.joueur.joueur1_actif = NULL;
-                images->jeu.joueur.joueur2_actif = NULL;
-                images->jeu.joueur.joueur3_actif = NULL;
-                images->jeu.joueur.bot1_actif = NULL;
-                images->jeu.joueur.bot2_actif = NULL;
-
-                // grille
-                images->jeu.Grille.grille7x6 = NULL;
-                images->jeu.Grille.grille9x8 = NULL;
-
-                // hardcore
-                images->jeu.hardcore.hardcore_bg = NULL;
-
-                images->jeu.hardcore.hardcore_Temps_Vert = NULL;
-                images->jeu.hardcore.hardcore_Temps_Orange = NULL;
-                images->jeu.hardcore.hardcore_Temps_Rouge = NULL;
-
-                // colonne
-                images->jeu.colonne.jeu_colonne_Desactive = NULL;
-
-                images->jeu.colonne.jeu_colonneTaille1_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille2_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille3_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille4_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille5_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille6_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille7_Active = NULL;
-                images->jeu.colonne.jeu_colonneTaille8_Active = NULL;
-
-                // pions
-                images->jeu.pions.pion1 = NULL;
-                images->jeu.pions.pion2 = NULL;
-                images->jeu.pions.pion3 = NULL;
-
-                images->jeu.pions.pion1_joue = NULL;
-                images->jeu.pions.pion2_joue = NULL;
-                images->jeu.pions.pion3_joue = NULL;
-
-                images->jeu.pions.pion1_gagne = NULL;
-                images->jeu.pions.pion2_gagne = NULL;
-                images->jeu.pions.pion3_gagne = NULL;
-
-                // FIN
-                images->fin.fin_LE_JOUEUR = NULL;
-                images->fin.fin_GAGNE = NULL;
-                images->fin.fin_EGALITE = NULL;*/
-            }
-            break;
-
-        case JEU:   // chargement des images du jeu
-            if(image->section_jeu == 0){
-                images->section_jeu = 1;
-
-                // MENU
-                images->menu.menu_logo = chargeImage("./data/menu/autre/menu_logo.png", pRenderer, fDebug);
-
-                images->menu.grillage.menu_grillage = chargeImage("./data/menu/grillage/menu_grillage.png", pRenderer, fDebug);
-                images->menu.grillage.menu_grillage1 = chargeImage("./data/menu/grillage/menu_grillage1.png", pRenderer, fDebug);
-                images->menu.grillage.menu_grillage2 = chargeImage("./data/menu/grillage/menu_grillage2.png", pRenderer, fDebug);
-                images->menu.grillage.menu_Borduregrillage = chargeImage("./data/menu/grillage/menu_Borduregrillage.png", pRenderer, fDebug);
-
-                images->menu.bouton.menu_Reprendre = chargeImage("./data/menu/bouton/menu_Reprendre.png", pRenderer, fDebug);
-                images->menu.bouton.menu_Rejouer = chargeImage("./data/menu/bouton/menu_Rejouer.png", pRenderer, fDebug);
-                images->menu.bouton.menu_RetourAccueil = chargeImage("./data/menu/bouton/menu_RetourAccueil.png", pRenderer, fDebug);
-                images->menu.bouton.menu_Quitter = chargeImage("./data/menu/bouton/menu_Quitter.png", pRenderer, fDebug);
-
-                // JEU
-                images->jeu.jeu_bg = chargeImage("./data/jeu/autre/jeu_bg.png", pRenderer, fDebug);
-                images->jeu.jeu_retour = chargeImage("./data/jeu/autre/jeu_retour.png", pRenderer, fDebug);
-
-                // joueur
-                images->jeu.joueur.joueur1 = chargeImage("./data/jeu/joueur/joueur1.png", pRenderer, fDebug);
-                images->jeu.joueur.joueur2 = chargeImage("./data/jeu/joueur/joueur2.png", pRenderer, fDebug);
-                images->jeu.joueur.joueur3 = chargeImage("./data/jeu/joueur/joueur3.png", pRenderer, fDebug);
-                images->jeu.joueur.bot1 = chargeImage("./data/jeu/joueur/bot1.png", pRenderer, fDebug);
-                images->jeu.joueur.bot2 = chargeImage("./data/jeu/joueur/bot2.png", pRenderer, fDebug);
-
-                images->jeu.joueur.joueur1_actif = chargeImage("./data/jeu/joueur/joueur1_actif.png", pRenderer, fDebug);
-                images->jeu.joueur.joueur2_actif = chargeImage("./data/jeu/joueur/joueur2_actif.png", pRenderer, fDebug);
-                images->jeu.joueur.joueur3_actif = chargeImage("./data/jeu/joueur/joueur3_actif.png", pRenderer, fDebug);
-                images->jeu.joueur.bot1_actif = chargeImage("./data/jeu/joueur/bot1_actif.png", pRenderer, fDebug);
-                images->jeu.joueur.bot2_actif = chargeImage("./data/jeu/joueur/bot2_actif.png", pRenderer, fDebug);
-
-                // grille
-                images->jeu.grille.grille7x6 = chargeImage("./data/jeu/grille/grille7x6.png", pRenderer, fDebug);
-                images->jeu.grille.grille9x8 = chargeImage("./data/jeu/grille/grille9x8.png", pRenderer, fDebug);
-
-                // hardcore
-                images->jeu.hardcore.hardcore_bg = chargeImage("./data/jeu/hardcore/hardcore_bg.png", pRenderer, fDebug);
-
-                images->jeu.hardcore.hardcore_Temps_Vert = chargeImage("./data/jeu/hardcore/hardcore_Temps_Vert.png", pRenderer, fDebug);
-                images->jeu.hardcore.hardcore_Temps_Orange = chargeImage("./data/jeu/hardcore/hardcore_Temps_Orange.png", pRenderer, fDebug);
-                images->jeu.hardcore.hardcore_Temps_Rouge = chargeImage("./data/jeu/hardcore/hardcore_Temps_Rouge.png", pRenderer, fDebug);
-
-                // colonne
-                images->jeu.colonne.jeu_colonne_Desactive = chargeImage("./data/jeu/colonne/jeu_colonne_Desactive.png", pRenderer, fDebug);
-
-                images->jeu.colonne.jeu_colonneTaille1_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille1_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille2_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille2_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille3_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille3_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille4_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille4_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille5_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille5_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille6_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille6_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille7_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille7_Active.png", pRenderer, fDebug);
-                images->jeu.colonne.jeu_colonneTaille8_Active = chargeImage("./data/jeu/colonne/jeu_colonneTaille8_Active.png", pRenderer, fDebug);
-
-                // pion
-                images->jeu.pions.pion1 = chargeImage("./data/jeu/pion/pion1.png", pRenderer, fDebug);
-                images->jeu.pions.pion2 = chargeImage("./data/jeu/pion/pion2.png", pRenderer, fDebug);
-                images->jeu.pions.pion3 = chargeImage("./data/jeu/pion/pion3.png", pRenderer, fDebug);
-
-                images->jeu.pions.pion1_joue = chargeImage("./data/jeu/pion/pion1_joue.png", pRenderer, fDebug);
-                images->jeu.pions.pion2_joue = chargeImage("./data/jeu/pion/pion2_joue.png", pRenderer, fDebug);
-                images->jeu.pions.pion3_joue = chargeImage("./data/jeu/pion/pion3_joue.png", pRenderer, fDebug);
-
-                images->jeu.pions.pion1_gagne = chargeImage("./data/jeu/pion/pion1_gagne.png", pRenderer, fDebug);
-                images->jeu.pions.pion2_gagne = chargeImage("./data/jeu/pion/pion2_gagne.png", pRenderer, fDebug);
-                images->jeu.pions.pion3_gagne = chargeImage("./data/jeu/pion/pion3_gagne.png", pRenderer, fDebug);
-
-
-                // FIN
-                images->fin.fin_LE_JOUEUR = chargeImage("./data/fin/texte/fin_LE_JOUEUR.png", pRenderer, fDebug);
-                images->fin.fin_GAGNE = chargeImage("./data/fin/texte/fin_GAGNE.png", pRenderer, fDebug);
-                images->fin.fin_EGALITE = chargeImage("./data/fin/texte/fin_EGALITE.png", pRenderer, fDebug);
-            }
-            if(images->section_acceuil){    // si les images de l'acceuil sont charge alors que le programme est dans la section du jeu alors on les supprimes
-                images->section_acceuil = 0;
-
-                // ACCUEIL
-                supprimeTexture(images->accueil.accueil_bg);
-                supprimeTexture(images->accueil.accueil_retour);
-                supprimeTexture(images->accueil.accueil_valide);
-
-                // 0
-                supprimeTexture(images->accueil.accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER);
-                supprimeTexture(images->accueil.accueil_0.accueil_jouer);
-
-                // 1
-                supprimeTexture(images->accueil.accueil_1.hardcore_inactif);
-                supprimeTexture(images->accueil.accueil_1.hardcore_1);
-                supprimeTexture(images->accueil.accueil_1.hardcore_2);
-
-                supprimeTexture(images->accueil.accueil_1.accueil_mode1);
-                supprimeTexture(images->accueil.accueil_1.accueil_mode2);
-                supprimeTexture(images->accueil.accueil_1.accueil_mode3);
-                supprimeTexture(images->accueil.accueil_1.accueil_mode4);
-
-                // 2
-                supprimeTexture(images->accueil.accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE);
-                supprimeTexture(images->accueil.accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface);
-
-                supprimeTexture(images->accueil.accueil_2.accueil_botJaune);
-                supprimeTexture(images->accueil.accueil_2.accueil_botRouge);
-                supprimeTexture(images->accueil.accueil_2.accueil_bot_inactif);
-
-                supprimeTexture(images->accueil.accueil_2.accueil_botFacile_actif);
-                supprimeTexture(images->accueil.accueil_2.accueil_botNormal_actif);
-                supprimeTexture(images->accueil.accueil_2.accueil_botDifficile_actif);
-
-                supprimeTexture(images->accueil.accueil_2.accueil_botFacile_inactif);
-                supprimeTexture(images->accueil.accueil_2.accueil_botNormal_inactif);
-                supprimeTexture(images->accueil.accueil_2.accueil_botDifficile_inactif);
-
-
-                /*// ACCUEIL
-                images->accueil.accueil_bg = NULL;
-                images->accueil.accueil_retour = NULL;
-                images->accueil.accueil_valide = NULL;
-
-                // 0
-                images->accueil.accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER = NULL;
-                images->accueil.accueil_0.accueil_jouer = NULL;
-
-                // 1
-                images->accueil.accueil_1.hardcore_inactif = NULL;
-                images->accueil.accueil_1.hardcore_1 = NULL;
-                images->accueil.accueil_1.hardcore_2 = NULL;
-
-                images->accueil.accueil_1.accueil_mode1 = NULL;
-                images->accueil.accueil_1.accueil_mode2 = NULL;
-                images->accueil.accueil_1.accueil_mode3 = NULL;
-                images->accueil.accueil_1.accueil_mode4 = NULL;
-
-                // 2
-                images->accueil.accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE = NULL;
-                images->accueil.accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface = NULL;
-
-                images->accueil.accueil_2.accueil_botJaune = NULL;
-                images->accueil.accueil_2.accueil_botRouge = NULL;
-                images->accueil.accueil_2.accueil_bot_inactif = NULL;
-
-                images->accueil.accueil_2.accueil_botFacile_actif = NULL;
-                images->accueil.accueil_2.accueil_botNormal_actif = NULL;
-                images->accueil.accueil_2.accueil_botDifficile_actif = NULL;
-
-                images->accueil.accueil_2.accueil_botFacile_inactif = NULL;
-                images->accueil.accueil_2.accueil_botNormal_inactif = NULL;
-                images->accueil.accueil_2.accueil_botDifficile_inactif = NULL;*/
-            }
-            break;
     }
 }
 
+// decharge toutes les images du jeu
+void dechargeToutesImages(Images* Images)
+{
+    // AUTRE
+        supprimeTexture(Images->Autre.croix);
+        supprimeTexture(Images->Autre.CHARGEMENT);
+
+
+    // NOMBRES
+        supprimeTexture(Images->Nombres.nb_0);
+        supprimeTexture(Images->Nombres.nb_1);
+        supprimeTexture(Images->Nombres.nb_2);
+        supprimeTexture(Images->Nombres.nb_3);
+        supprimeTexture(Images->Nombres.nb_4);
+        supprimeTexture(Images->Nombres.nb_5);
+        supprimeTexture(Images->Nombres.nb_6);
+        supprimeTexture(Images->Nombres.nb_7);
+        supprimeTexture(Images->Nombres.nb_8);
+        supprimeTexture(Images->Nombres.nb_9);
+
+    // PARAMETRE
+        supprimeTexture(Images->Parametre.parametre_logo);
+        supprimeTexture(Images->Parametre.parametre_bg);
+
+        supprimeTexture(Images->Parametre.JoueurCommence.joueurCommence_bg);
+
+        supprimeTexture(Images->Parametre.JoueurCommence.joueur1Commence);
+        supprimeTexture(Images->Parametre.JoueurCommence.joueur1Commence_actif);
+        supprimeTexture(Images->Parametre.JoueurCommence.joueur2Commence);
+        supprimeTexture(Images->Parametre.JoueurCommence.joueur2Commence_actif);
+        supprimeTexture(Images->Parametre.JoueurCommence.joueur3Commence);
+        supprimeTexture(Images->Parametre.JoueurCommence.joueur3Commence_actif);
+
+
+    // MENU
+
+        supprimeTexture(Images->Menu.menu_logo);
+
+        supprimeTexture(Images->Menu.Grillage.menu_Grillage);
+        supprimeTexture(Images->Menu.Grillage.menu_Grillage1);
+        supprimeTexture(Images->Menu.Grillage.menu_Grillage2);
+        supprimeTexture(Images->Menu.Grillage.menu_BordureGrillage);
+
+        supprimeTexture(Images->Menu.Bouton.menu_Reprendre);
+        supprimeTexture(Images->Menu.Bouton.menu_Rejouer);
+        supprimeTexture(Images->Menu.Bouton.menu_RetourAccueil);
+        supprimeTexture(Images->Menu.Bouton.menu_Quitter);
+
+
+    // ACCUEIL
+        supprimeTexture(Images->Accueil.accueil_bg);
+        supprimeTexture(Images->Accueil.accueil_retour);
+        supprimeTexture(Images->Accueil.accueil_valide);
+
+        // 0
+        supprimeTexture(Images->Accueil.Accueil_0.accueil_APPUYEZ_SUR_UNE_TOUCHE_POUR_JOUER);
+        supprimeTexture(Images->Accueil.Accueil_0.accueil_jouer);
+
+        // 1
+        supprimeTexture(Images->Accueil.Accueil_1.hardcore_inactif);
+        supprimeTexture(Images->Accueil.Accueil_1.hardcore_1);
+        supprimeTexture(Images->Accueil.Accueil_1.hardcore_2);
+
+        supprimeTexture(Images->Accueil.Accueil_1.accueil_mode1);
+        supprimeTexture(Images->Accueil.Accueil_1.accueil_mode2);
+        supprimeTexture(Images->Accueil.Accueil_1.accueil_mode3);
+        supprimeTexture(Images->Accueil.Accueil_1.accueil_mode4);
+
+        // 2
+
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_SELECTIONNEZ_UNE_DIFFICULTEE_efface);
+
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botJaune);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botRouge);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_bot_inactif);
+
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botFacile_actif);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botNormal_actif);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botDifficile_actif);
+
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botFacile_inactif);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botNormal_inactif);
+        supprimeTexture(Images->Accueil.Accueil_2.accueil_botDifficile_inactif);
+
+
+    // JEU
+        supprimeTexture(Images->Jeu.jeu_bg);
+        supprimeTexture(Images->Jeu.jeu_retour);
+
+        // joueur
+        supprimeTexture(Images->Jeu.Joueur.joueur1);
+        supprimeTexture(Images->Jeu.Joueur.joueur2);
+        supprimeTexture(Images->Jeu.Joueur.joueur3);
+        supprimeTexture(Images->Jeu.Joueur.bot1);
+        supprimeTexture(Images->Jeu.Joueur.bot2);
+
+        supprimeTexture(Images->Jeu.Joueur.joueur1_actif);
+        supprimeTexture(Images->Jeu.Joueur.joueur2_actif);
+        supprimeTexture(Images->Jeu.Joueur.joueur3_actif);
+        supprimeTexture(Images->Jeu.Joueur.bot1_actif);
+        supprimeTexture(Images->Jeu.Joueur.bot2_actif);
+
+        // grille
+        supprimeTexture(Images->Jeu.Grille.grille7x6);
+        supprimeTexture(Images->Jeu.Grille.grille9x8);
+
+        // hardcore
+        supprimeTexture(Images->Jeu.Hardcore_.hardcore_bg);
+
+        supprimeTexture(Images->Jeu.Hardcore_.hardcore_Temps_Vert);
+        supprimeTexture(Images->Jeu.Hardcore_.hardcore_Temps_Orange);
+        supprimeTexture(Images->Jeu.Hardcore_.hardcore_Temps_Rouge);
+
+        // colonne
+        supprimeTexture(Images->Jeu.Colonne.jeu_Colonne_Desactive);
+
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille1_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille2_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille3_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille4_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille5_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille6_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille7_Active);
+        supprimeTexture(Images->Jeu.Colonne.jeu_ColonneTaille8_Active);
+
+        // pions
+        supprimeTexture(Images->Jeu.Pions.pion1);
+        supprimeTexture(Images->Jeu.Pions.pion2);
+        supprimeTexture(Images->Jeu.Pions.pion3);
+
+        supprimeTexture(Images->Jeu.Pions.pion1_joue);
+        supprimeTexture(Images->Jeu.Pions.pion2_joue);
+        supprimeTexture(Images->Jeu.Pions.pion3_joue);
+
+        supprimeTexture(Images->Jeu.Pions.pion1_gagne);
+        supprimeTexture(Images->Jeu.Pions.pion2_gagne);
+        supprimeTexture(Images->Jeu.Pions.pion3_gagne);
+
+    // FIN
+        supprimeTexture(Images->Fin.fin_LE_JOUEUR);
+        supprimeTexture(Images->Fin.fin_GAGNE);
+        supprimeTexture(Images->Fin.fin_EGALITE);
+
+}
 
 // action
 
-void affichage(Im_Images* images, InfoJeu* jeu, InfoFenetre* fenetre, FILE* fDebug){
-
-    if(fenetre->ecran == CHARGEMENT){
-        if(images->autre.CHARGEMENT == NULL){
-            chargeImage(images->autre.CHARGEMENT)
-        }
-    }
-    else if(images->section_autre == 0){
-        chargeSectionImage(AUTRE, images, fenetre->pRenderer, fDebug);
-    }
-
-    switch(fenetre->ecran){
-        case CHARGEMENT:{
-            afficheImage(images->autre.CHARGEMENT, [0, 0], NON, fenetre->pRenderer, fDebug);
-            break;
-        }
-
-        case LENCEMENT:{
-            if(images->section_acceuil == 0){
-                chargeSectionImage(CHARGEMENT, images, fenetre->pRenderer, fDebug);
-            }
-
-            /*j'en suis ici, il faut faire l'affichage du premier ecran, avec la phrase qui clignote, donc utiliser le temps pour
-            l'animation, donc refaire le sisteme d'image.*/
-
-            break;
-        }
-
-        case ACCUEIL_MENU:{
-            if(images->section_acceuil == 0){
-                chargeSectionImage(CHARGEMENT, images, fenetre->pRenderer, fDebug);
-            }
-            break;
-        }
-
-        case ACCUEIL_BOT:{
-            if(images->section_acceuil == 0){
-                chargeSectionImage(CHARGEMENT, images, fenetre->pRenderer, fDebug);
-            }
-            break;
-        }
-
-        case JEU:{
-            if(images->section_acceuil == 0){
-                chargeSectionImage(JEU, images, fenetre->pRenderer, fDebug);
-            }
-            break;
-        }
-    }
-
-
-}
-
-
 // affiche les parametres
-void parametre(infoJeu* jeu, Im_Images* images, SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde)
+void parametre(int mode, int* joueurCommence, Images* Images, SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde)
 {
-    // taille du renderer
-    int x = 0, y = 0;
-    SDL_GetRendererOutputSize(pRenderer, &x, &y);
 
-    afficheImage(images->Parametre.parametre_bg, [x/2, 9*y/16], OUI, pRenderer, fDebug);
+    while(eventParametre(mode, joueurCommence, Images, pWindow, pRenderer, fDebug, fSauvegarde))
+    {
 
-    // joueur commence
-    afficheImage(images->parametre.joueurCommence.joueurCommence_bg, [x/2 - 360, 9*y/16], OUI, pRenderer, fDebug);
+        // taille du renderer
+        int x = 0, y = 0;
+        SDL_GetRendererOutputSize(pRenderer, &x, &y);
 
-    afficheImage(images->parametre.joueurCommence.joueur1Commence, [x/2 - 360, 9*y/16 - 97.5], OUI, pRenderer, fDebug);
-    afficheImage(images->parametre.joueurCommence.joueur2Commence, [x/2 - 360, 9*y/16 + 26.5], OUI, pRenderer, fDebug);
-    afficheImage(images->parametre.joueurCommence.joueur3Commence, [x/2 - 360, 9*y/16 + 151.5], OUI, pRenderer, fDebug);
+        SDL_Rect dest;
 
-    switch(jeu->joueurCommence){
-        case 1:
-            afficheImage(images->parametre.joueurCommence.joueur1Commence_actif, [x/2 - 360, 9*y/16 - 97.5], OUI, pRenderer, fDebug);
-            break;
-        case 2:
-            afficheImage(images->parametre.joueurCommence.joueur2Commence_actif, [x/2 - 360, 9*y/16 + 26.5], OUI, pRenderer, fDebug);
-            break;
-        case 3:
-            afficheImage(images->parametre.joueurCommence.joueur3Commence_actif, [x/2 - 360, 9*y/16 + 151.5], OUI, pRenderer, fDebug);
-            break;
+
+        {// affichage des parametres
+
+            changeDest(&dest, x/2, 9*y/16);
+            afficheImage_Centre(Images->Parametre.parametre_bg, &dest, pRenderer, fDebug);
+
+            {// joueur commence
+
+                changeDest(&dest, x/2 - 360, 9*y/16);
+                afficheImage_Centre(Images->Parametre.JoueurCommence.joueurCommence_bg, &dest, pRenderer, fDebug);
+
+
+                changeDest(&dest, x/2 - 360, 9*y/16 - 97.5);
+                afficheImage_Centre(Images->Parametre.JoueurCommence.joueur1Commence, &dest, pRenderer, fDebug);
+
+                changeDest(&dest, x/2 - 360, 9*y/16 + 26.5);
+                afficheImage_Centre(Images->Parametre.JoueurCommence.joueur2Commence, &dest, pRenderer, fDebug);
+
+                changeDest(&dest, x/2 - 360, 9*y/16 + 151.5);
+                afficheImage_Centre(Images->Parametre.JoueurCommence.joueur3Commence, &dest, pRenderer, fDebug);
+
+
+                switch(*joueurCommence)
+                {
+                    case 1:
+                        changeDest(&dest, x/2 - 360, 9*y/16 - 97.5);
+                        afficheImage_Centre(Images->Parametre.JoueurCommence.joueur1Commence_actif, &dest, pRenderer, fDebug);
+                    break;
+
+                    case 2:
+                        changeDest(&dest, x/2 - 360, 9*y/16 + 26.5);
+                        afficheImage_Centre(Images->Parametre.JoueurCommence.joueur2Commence_actif, &dest, pRenderer, fDebug);
+                    break;
+
+                    case 3:
+                        changeDest(&dest, x/2 - 360, 9*y/16 + 151.5);
+                        afficheImage_Centre(Images->Parametre.JoueurCommence.joueur3Commence_actif, &dest, pRenderer, fDebug);
+                    break;
+                }
+            }
+
+            SDL_RenderPresent(pRenderer);
+            debugWindow_Affiche();
+        }
+
     }
 }
 
-// affiche les accueils et fait intervenir les evenements liÃ©
+// affiche les accueils et fait intervenir les evenements lié
 void accueil(int accueil, int* mode, int* joueurCommence, int* difficulteBot1, int* difficulteBot2, Hardcore* hardcore, Images* Images, SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde)
 {
                           /*accueil = id de l'accueil:
@@ -816,7 +1127,7 @@ void accueil(int accueil, int* mode, int* joueurCommence, int* difficulteBot1, i
     }
 }
 
-// permet de jouer une colonne, affiche les images et fait intervenir les evenements liÃ©s
+// permet de jouer une colonne, affiche les images et fait intervenir les evenements liés
 void jouerColonne(int mode, int* joueurCommence, int tour, int joueur, caseGrille grille[9][9], Hardcore* hardcore, int* colonne, int* retour, int* rejouerPartie, int* retourAccueil, Images* Images, SDL_Window*  pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde)
 {
 
@@ -1679,7 +1990,7 @@ void animationGrillage(int utilisation, int fin, int mode, int joueur, int tour,
         /*
         la variable utilisation a 2 fonctions:
         si elle est positive, elle affiche la grille en mode fin
-        si son absolu est Ã©gal a 2, elle affiche la grille sans animation
+        si son absolu est égal a 2, elle affiche la grille sans animation
         */
 
         /*
