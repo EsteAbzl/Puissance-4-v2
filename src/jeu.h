@@ -4,9 +4,25 @@
 
 #include <SDL2/SDL.h>
 
-// corp du jeu
-void fonctionJeu(SDL_Window* pWindow, SDL_Renderer* pRenderer, FILE* fDebug, FILE* fSauvegarde);
+#include "video.h"
+#include "image.h"
 
+
+typedef struct Pion{
+	   int x;// milieu du pion sur l'axe x
+
+	   int y;// milieu du pion sur l'axe y
+
+	   En_Image image;
+
+	   int velociteY;/* vitesse du pion sur l'axe y
+	                 - = descend
+	                 + = monte
+
+	                 ! important ! avec SDL, si on fait y + 30, le pion va descendre de 30 pixels,
+	                 il faut donc inverser et faire y - velociteY pour ne pas avoir d'erreurs.
+	                 */
+} Pion;
 
 // compose la grille
 typedef struct CaseGrille{
@@ -19,13 +35,15 @@ typedef struct CaseGrille{
                  3 = joueur 3
                  */
 
-     int etat;
+    int etat;
                 /*
                 0 = case vide
                 1 = normal
                 2 = vient d'être joue
                 3 = gagne
                 */
+    Pion pion;
+
 
 } CaseGrille;
 
@@ -42,22 +60,6 @@ typedef struct Hardcore{
    	int tempsRestant;
 } Hardcore;
 
-void res_Hardcore(Hardcore* hardcore);
-
-typedef struct Pion{
-	   int x;// milieu du pion sur l'axe x
-
-	   int y;// milieu du pion sur l'axe y
-
-	   int velociteY;/* vitesse du pion sur l'axe y
-	                 - = descend
-	                 + = monte
-
-	                 ! important ! avec SDL, si on fait y + 30, le pion va descendre de 30 pixels,
-	                 il faut donc inverser et faire y - velociteY pour ne pas avoir d'erreurs.
-	                 */
-} Pion;
-
 
 typedef struct Strat{
     int colonne;    // colonne du pion inférieur gauche de la strategie
@@ -71,7 +73,6 @@ typedef struct Strat{
                     */
 } Strat;
 
-void res_Strat(Strat* strat);
 
 typedef struct Bot{
     Strat strat;
@@ -83,14 +84,14 @@ typedef struct Bot{
                         */
 } Bot;
 
-void res_Bot(Bot* bot);
-
-
 typedef struct InfoJeu{
+    int m_x, m_y;   // positions de la souris
+
     CaseGrille grille[9][9];// grille de jeu
 
-    FILE* fSauvegarde;
+    int infoGrille[9]; // permet de connaitre le nombre de pions restant dans chaques colonne
 
+    FILE* fSauvegarde;
     Hardcore hardcore;
 
     int mode;   /*
@@ -107,10 +108,32 @@ typedef struct InfoJeu{
 
     int colonne;// colonne jouee
     int tour;   // incremente a chaques tours, permet de detecter une egalite
+    int retour; // permet de revenir au tour precedent
+
+    int rejouerPartie;
+    int retourAccueil;
+    int fin;        /*
+                    -1 : egalite
+                    0 : pas termine
+                    1 : victoire du joueur 1
+                    2 : victoire du joueur 2
+                    3 : victoire du joueur 3
+                    */
 
 } InfoJeu;
 
+void res_Hardcore(Hardcore* hardcore);
+
+void res_Strat(Strat* strat);
+
+void res_Bot(Bot* bot);
+
 void res_InfoJeu(InfoJeu* jeu);
+
+void res_InfoPartie(InfoJeu* jeu);
+
+// corp du jeu
+void fonctionJeu(struct InfoFenetre* fenetre, FILE* fDebug);
 
 
 #endif // ABZ_JEU

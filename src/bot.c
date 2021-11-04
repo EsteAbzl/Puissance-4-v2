@@ -12,8 +12,16 @@
 /*!!! NE PAS OUBLIER DE METTRE "srand(time(NULL));" DANS LE MAIN DU PROGRAMME*/
 
 //choisit une colonne de differentes façons selon la difficultee
-int bot(int bot, int difficulte, caseGrille grille[9][9], strat *stratActive)
+void bot(Bot* info_bot, InfoJeu* jeu)
 {
+
+    int bot = jeu->joueur;
+    int difficulte = info_bot->difficulte;
+    Strat* stratActive = &info_bot->strat;
+
+    CaseGrille* grille = jeu->grille;
+
+
 /*
 	difficulte:
  1: 3 aligne, sinon 2 aligne, sinon hazard (blacklist desactivé)
@@ -25,11 +33,12 @@ int bot(int bot, int difficulte, caseGrille grille[9][9], strat *stratActive)
     int	colonne = -1;
 
 
-    blkList blacklist[7]; // voir bot.h
+    BlkList blacklist[7]; // voir bot.h
 
     // les colonnes remplies ne peuvent pas etre jouee
-    int infoGrille[9];
-    infosGrille(4, infoGrille, grille);
+
+    infosGrille(jeu);
+    int* infoGrille = jeu->infoGrille;
 
     for(int i = 0; i < 7; i++)
     {
@@ -143,9 +152,6 @@ int bot(int bot, int difficulte, caseGrille grille[9][9], strat *stratActive)
                 }
             }
         }
-
-
-
     }
 
 
@@ -185,14 +191,12 @@ int bot(int bot, int difficulte, caseGrille grille[9][9], strat *stratActive)
         strcat(debugTexte[9].txt, "|");
     }
 
-
-    return colonne;
-
+    jeu->colonne = colonne;
 }
 
 
 // verifie les puissance 3: *xxx / xxx*
-int aligne3(int bot, caseGrille grille[9][9], blkList blacklist[7])
+int aligne3(int bot, CaseGrille grille[9][9], BlkList blacklist[7])
 {
     int jeton = bot;// on commence par chercher le bot qui joue
     int tour = 0;// incremente a chaques tours
@@ -636,7 +640,7 @@ int aligne3(int bot, caseGrille grille[9][9], blkList blacklist[7])
 
 
 // verifie les puissance 2: *xx- / -xx*
-int aligne2(int bot, caseGrille grille[9][9], blkList blacklist[7])
+int aligne2(int bot, CaseGrille grille[9][9], BlkList blacklist[7])
 {
     int jeton = bot;// on commence par chercher le bot qui joue
     int tour = 0;// incremente a chaques tours
@@ -1044,7 +1048,7 @@ int aligne2(int bot, caseGrille grille[9][9], blkList blacklist[7])
 
 
 // permet au bot de trouver une stratégie
-void trouveStrat(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *stratActive)
+void trouveStrat(int bot, CaseGrille grille[9][9], BlkList blacklist[7], Strat *stratActive)
 {
     // si pionDejaPlace > pionDejaPlaceMax alors on supprime "stratPossible" et on le recrée avec des strat plus avancée. on choisira une strat au hazard parmi celle du tableau a la fin
 
@@ -1056,7 +1060,7 @@ void trouveStrat(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *
         autreJoueur = 1;
 
 
-    strat *stratPossible;
+    Strat *stratPossible;
     stratPossible = malloc(sizeof(int) * 3);
 
     int tailleTableau = 0;
@@ -1742,7 +1746,7 @@ void trouveStrat(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *
 }
 
 // permet au bot d'appliquer sa strategies
-int strategie(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *stratActive)
+int strategie(int bot, CaseGrille grille[9][9], BlkList blacklist[7], Strat *stratActive)
 {
 
     int stop = 0;
@@ -2660,7 +2664,7 @@ int strategie(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *str
 }
 
 // verifie que la stratégie est encore applicable
-int* checStrat(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *stratActive, int *nombreErreur, int *erreur)
+int* checStrat(int bot, CaseGrille grille[9][9], BlkList blacklist[7], Strat *stratActive, int *nombreErreur, int *erreur)
 {
             /*
                 retour:

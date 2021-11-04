@@ -5,6 +5,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "debug.h"
+
 #include "grille.h"
 #include "video.h"
 #include "image.h"
@@ -17,67 +19,63 @@ void res_Grille(CaseGrille grille[9][9])
 	   // pour toute la grille
     for(int i=0;i<9;i++)
     {
-        for(int ii=0;ii<9;ii++)
+        for(int j=0;j<9;j++)
         {
         	   // initialise la structure
-            grille[i][ii].joueur = 0;
-            grille[i][ii].etat = 0;
+            grille[i][j].joueur = 0;
+            grille[i][j].etat = 0;
+
+            grille[i][j].pion.image = 0;
+            grille[i][j].pion.velociteY = 0;
+            grille[i][j].pion.x = 0;
+            grille[i][j].pion.y = 0;
         }
     }
 }
 
 // trouve a quelle case placer le pion, et le place
-int placePion(int joueur, int colonne, int mode, int tour, int *rejouerPartie, int *retourAccueil, int* joueurCommence, Hardcore* hardcore, caseGrille grille[9][9], Images* Images, SDL_Window *pWindow, SDL_Renderer *pRenderer, FILE *fDebug, FILE *fSauvegarde)
+void placePion(InfoJeu* jeu, InfoFenetre* fenetre)
 {
 
-int l;
+    // nombre de lignes different selon le mode
+    int ligneMax = (jeu->mode == 3)? 8 : 6;
+    int debutPion = (jeu->mode == 3)? fenetre->w/2 - 400 : fenetre->w/2 - 300;
 
-// nombre de lignes different selon le mode
-if(mode != 3)
-    l = 6;
-else
-{
-    l = 8;
-}
+    infosGrille(jeu);
 
-    for(int ligne = 0; ligne < l; ligne++)
-    {
-        if(grille[colonne][ligne].joueur == 0)// cherche une case vide dans la colonne donnee
-        {
+    if(jeu->infoGrille[jeu->colonne]){
+        remplacePion_joue(jeu);
 
-            remplacePion_joue(grille);// change l'ancien 'pion_joue' en pion normal
+    // animationPion()
 
-            animationPion(colonne, joueur, mode, tour, rejouerPartie, retourAccueil, joueurCommence, hardcore, grille, Images, pWindow, pRenderer, fDebug, fSauvegarde);
-
-            grille[colonne][ligne].joueur = joueur;// la case jouee est assigne au joueur
-            grille[colonne][ligne].etat = 2;// elle prend l'etat 'pion_joue'
-
-            return 0;
-        }
+        jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].joueur = jeu->joueur;// la case jouee est assigne au joueur
+        jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].etat = 2;// elle prend l'etat 'pion_joue'
+        jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].pion.image = pion1 + (jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].joueur - 1) + ((jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].etat - 1) * 3);
+        jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].pion.x = debutPion + (jeu->colonne * 100);
+        jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].pion.y = fenetre->h/2 - 350 + (jeu->infoGrille[jeu->colonne] * 100);
+        fprintf(fDebug, "%d, %d", jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].pion.x, jeu->grille[jeu->colonne][ligneMax - jeu->infoGrille[jeu->colonne]].pion.y);
+        DEBUG("\n")
     }
-
-    return 1;
 }
 
 // change les "pion_joue" en "pion"
-void remplacePion_joue(caseGrille grille[9][9])
+void remplacePion_joue(InfoJeu* jeu)
 {
-
-    for(int colonne = 0; colonne < 9; colonne++)
-    {
-    	   for(int ligne = 0; ligne < 8; ligne++)
-    	   {
-
-    	   	   if(grille[colonne][ligne].etat == 2)// chercher un 'pion_joue'
-    	   	       grille[colonne][ligne].etat = 1;// le remplace par un pion normal
-    	   }
+    for(int colonne = 0; colonne < 9; colonne++){
+        for(int ligne = 0; ligne < 8; ligne++){
+            if(jeu->grille[colonne][ligne].etat == 2){// chercher un 'pion_joue'
+                jeu->grille[colonne][ligne].etat = 1;// le remplace par un pion normal
+                jeu->grille[colonne][ligne].pion.image = pion1 + (jeu->grille[colonne][ligne].joueur - 1) + ((jeu->grille[colonne][ligne].etat - 1) * 3);
+            }
+        }
     }
-
 }
 
 // verifie les puissance 4
-int aligne4(caseGrille grille[9][9], int mode)
+void aligne4(CaseGrille grille[9][9], InfoJeu* jeu)
 {
+
+    int mode = jeu->mode;
 
     int fin = 0;// indique le joueur qui gagne
     int ligneMax, colonneMax;
@@ -180,144 +178,112 @@ int aligne4(caseGrille grille[9][9], int mode)
         }
     }
 
-    return fin;
+    jeu->fin = fin;
 
 }
 
 // recupere le nombre de cases vides de chaques colonne
-void infosGrille(int mode, int infoGrille[9], caseGrille grille[9][9])
+void infosGrille(InfoJeu* jeu)
 {
-	   // reset de infoGrille
-   	for(int i = 0; i < 9; i++)
-    {
-        infoGrille[i] = 0;
-    }
-
-     int c, l;
-
-    // nombre de lignes different selon le mode
-    if(mode != 3)
-        c = 7, l = 6;
-    else
-        c = 9, l = 8;
+    int colonne = (jeu->mode == 3)? 9 : 7;
+    int ligne = (jeu->mode == 3)? 8 : 6;
 
 
-    for(int i = 0; i < c; i++)
-    {
-    	   for(int ii = 0; ii < l; ii++)
-        {
-            if(grille[i][ii].joueur == 0)// cherche une case vide
-            {
-            	   infoGrille[i]++;
+
+    for(int i = 0; i < colonne; i++){
+        jeu->infoGrille[i] = 0;
+        for(int j = 0; j < ligne; j++){
+            if(jeu->grille[i][j].joueur == 0){// cherche une case vide
+            	   jeu->infoGrille[i]++;
             }
         }
     }
-
 }
 
 // sauvegarde la grille dans un fichier
-void sauvegardeGrille(int tour, int joueur, caseGrille grille[9][9], FILE* fDebug, FILE* fSauvegarde)
+void sauvegardeGrille(InfoJeu* jeu, FILE* fDebug)
 {
 	   // place le curseur virtuel a la fin du fichier
 
-	   fseek(fSauvegarde, 0, SEEK_CUR);
+	   fseek(jeu->fSauvegarde, 0, SEEK_CUR);
 
-	   fprintf(fSauvegarde, ":%d %d\n", tour, joueur); // infos de tour
-
-	   for(int i = 7; i > -1; i--)
-	   {
-	   	  for(int ii = 0; ii < 9; ii++)
-	   	  {
-	   	  	   // joueur et etat du pion
-	   	  	   fprintf(fSauvegarde, " %d/%d", grille[ii][i].joueur, grille[ii][i].etat);
+	   fprintf(jeu->fSauvegarde, ":%d %d\n", jeu->tour, jeu->joueur);   // infos de tour
+	   for(int i = 7; i > -1; i--){
+	   	  for(int j = 0; j < 9; j++){
+	   	  	   fprintf(jeu->fSauvegarde, " %d/%d", jeu->grille[j][i].joueur, jeu->grille[j][i].etat);   // joueur et etat du pion
 	   	  }
-
-	   	  fputc('\n', fSauvegarde);
+	   	  fputc('\n', jeu->fSauvegarde);
 	   }
-
-	   fputc('\n', fSauvegarde);
+	   fputc('\n', jeu->fSauvegarde);
 
 }
 
 // lis un fichier a la recherche d'un tour donne et remplace la grille actuelle par celle sauvegardee
-void recupereGrille(int* tour, int* joueur, caseGrille grille[9][9], Images* Images, SDL_Window *pWindow, SDL_Renderer *pRenderer,  FILE* fDebug, FILE* fSauvegarde)
-{
+void recupereGrille(Image* images, InfoJeu* jeu, InfoFenetre* fenetre, FILE* fDebug){
 
-        // place le curseur virtuel au debut du fichier
-        fseek(fSauvegarde, 0, SEEK_SET);
+    // place le curseur virtuel au debut du fichier
+    fseek(jeu->fSauvegarde, 0, SEEK_SET);
 
-        int i = 1, securite2 = 0;
-        long securite = 0;
-        // trouve le bon tour
-        while(i)
-        {
+    int lecture = 1, securite2 = 0;
+    long securite = 0;
 
-	      	while(fgetc(fSauvegarde) != ':')
-            {
-                securite++;
-            if(securite > 1000000000)
-                fermetureFenetre(Images, pWindow, pRenderer, fDebug, fSauvegarde);
-            }
+    // trouve le bon tour dans le fichier
+    while(lecture){
 
-
-            char aTour[4];
-            aTour[0] = ' ';
-            aTour[1] = ' ';
-            aTour[2] = ' ';
-            aTour[3] = '\0';
-
-
-
-            for(int ii = 0, c = 0; c != ' '; ii++)
-            {
-                c = fgetc(fSauvegarde);
-
-                aTour[ii] = c;
-            }
-
-
-            if(atoi(aTour) == (*tour) - 1)
-            {
-                i = 0;
-                (*tour) -= 2;
-
-            }
-
-            securite2++;
-            if(securite2 > 100)
-                fermetureFenetre(Images, pWindow, pRenderer, fDebug, fSauvegarde);
+        while(fgetc(jeu->fSauvegarde) != ':'){
+            securite++;
+            if(securite > 10000000) // dans le cas où le fichier a été suprimé ou altéré
+                DEBUG("fSauvegarde altéré, fermeture du programme")
+                fermetureFenetre(images, fenetre, fDebug, jeu->fSauvegarde);
         }
 
-	   (*joueur) = 0;
+        char infoTour[4];
+        sprintf(infoTour, "   ");
 
-	   char chiffre[2];
-	    chiffre[0] = ' ';
-	     chiffre[1] = '\0';
+        for(int j = 0, c = 0; c != ' '; j++){
+            c = fgetc(jeu->fSauvegarde);
+            infoTour[j] = c;
+        }
 
-	   while(*joueur != 1 && *joueur != 2 && *joueur != 3)
-	   {
-	       chiffre[0] = fgetc(fSauvegarde);
-	       *joueur = atoi(chiffre);// recupere les infos de joueur
-	   }
+        if(atoi(infoTour) == (jeu->tour) - 1){
+            lecture = 0;
+            jeu->tour -= 2;
+        }
 
-	   fgetc(fSauvegarde);// on passe le \n
+        securite2++;
+        if(securite2 > 100){
+            DEBUG("fSauvegarde altéré, fermeture du programme")
+            fermetureFenetre(images, fenetre, fDebug, jeu->fSauvegarde);
+        }
+    }
 
-	   for(int i = 7; i > -1; i--)
-	   {
-	   	  for(int ii = 0; ii < 9; ii++)
-	   	  {
+    int joueur = 0;
 
-	   	  	   fgetc(fSauvegarde);// ' '
-	   	  	   chiffre[0] = fgetc(fSauvegarde);
-	   	  	   grille[ii][i].joueur = atoi(chiffre); // joueur auquel appartient la case
-	   	  	   fgetc(fSauvegarde);// '/'
-	   	  	   chiffre[0] = fgetc(fSauvegarde);
-	   	  	   grille[ii][i].etat = atoi(chiffre); // etat de la case
-	   	  }
+    char chiffre[2];
+    chiffre[0] = ' ';
+    chiffre[1] = '\0';
 
-	   	  fgetc(fSauvegarde);// \n
-	   }
+    while(joueur != 1 && joueur != 2 && joueur != 3){
+        chiffre[0] = fgetc(jeu->fSauvegarde);
+        joueur = atoi(chiffre);// recupere les infos de joueur
+    }
 
-    fgetc(fSauvegarde);// \n
+    jeu->joueur = joueur;
 
+    fgetc(jeu->fSauvegarde);// on passe le \n
+
+    for(int i = 7; i > -1; i--){
+        for(int j = 0; j < 9; j++){
+
+            fgetc(jeu->fSauvegarde);// ' '
+            chiffre[0] = fgetc(jeu->fSauvegarde);
+            jeu->grille[j][i].joueur = atoi(chiffre); // joueur auquel appartient la case
+            fgetc(jeu->fSauvegarde);// '/'
+            chiffre[0] = fgetc(jeu->fSauvegarde);
+            jeu->grille[j][i].etat = atoi(chiffre); // etat de la case
+        }
+        fgetc(jeu->fSauvegarde);// \n
+    }
+
+    fgetc(jeu->fSauvegarde);// \n
 }

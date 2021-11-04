@@ -1,12 +1,12 @@
 // Utilisation:
 /*
-sprintf(debugTexte[0].txt,"mode séléctionné: %d", mode);
+sprintf(debugTexte[0].txt,"mode sÃ©lÃ©ctionnÃ©: %d", mode);
 */
 
 // debugLigneUtilise:
 /*
     0: [jeu.c]/jeu()            - titre: generale
-    1: [jeu.c]/jeu()            - mode séléctionné
+    1: [jeu.c]/jeu()            - mode sÃ©lÃ©ctionnÃ©
     2: [jeu.c]/jeu()            - tour actuel
     3
     4: [jeu.c]/jeu()            - titre: bot
@@ -16,8 +16,8 @@ sprintf(debugTexte[0].txt,"mode séléctionné: %d", mode);
     8: [bot.c]/bot()            - black list joueur
     9: [bot.c]/bot()            - black list type
     10
-    11: [bot.c]/checStrat()     - nombre d'erreurs de stratégie
-    12: [bot.c]/checStrat()     - précision des erreurs
+    11: [bot.c]/checStrat()     - nombre d'erreurs de stratÃ©gie
+    12: [bot.c]/checStrat()     - prÃ©cision des erreurs
 
 */
 

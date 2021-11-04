@@ -31,12 +31,19 @@ void res_Strat(Strat* strat){
 }
 
 void res_Bot(Bot* bot){
-    bot->difficulte = -1;
+    bot->difficulte = 0;
     res_Strat(&bot->strat);
 }
 
 void res_InfoJeu(InfoJeu* jeu){
+    jeu->m_x = 0;
+    jeu->m_y = 0;
+
     res_Grille(jeu->grille);
+
+    for(int i = 0; i < 9; i++){
+        jeu->infoGrille[i] = 0;
+    }
 
     //initialisation du fichier de sauvegarde de la partie ('fSauvegarde')
     jeu->fSauvegarde = NULL;
@@ -48,237 +55,205 @@ void res_InfoJeu(InfoJeu* jeu){
 
     res_Hardcore(&jeu->hardcore);
 
-    res_Bot(*jeu->bot1);
-    res_Bot(*jeu->bot2);
+    res_Bot(&jeu->bot1);
+    res_Bot(&jeu->bot2);
 
     jeu->joueurCommence = 1;
     jeu->joueur = 0;
 
     jeu->colonne = -1;
     jeu->tour = 0;
+    jeu->retour = 0;
+
+    jeu->rejouerPartie = 0;
+    jeu->retourAccueil = 0;
+    jeu->fin = 0;
 }
 
+void res_InfoPartie(InfoJeu* jeu){
+    res_Grille(jeu->grille);
+
+    for(int i = 0; i < 9; i++){
+        jeu->infoGrille[i] = 0;
+    }
+
+    if(jeu->hardcore.mode == 1)
+        jeu->hardcore.tempsRestant = 10;
+    else if(jeu->hardcore.mode == 2)
+        jeu->hardcore.tempsRestant = 3;
+
+    // clear du fichiers de sauvegarde
+    fclose(jeu->fSauvegarde);
+    jeu->fSauvegarde = NULL;
+    remove("./data/sauvegarde.txt");
+
+    if((jeu->fSauvegarde = fopen("./data/sauvegarde.txt","w+")) == NULL){
+        fprintf(fDebug, "ERREUR: impossible d'ouvrir le fichier 'fSauvegarde.txt'");
+        exit(-1);
+    }
+
+    res_Strat(&jeu->bot1.strat);
+    res_Strat(&jeu->bot2.strat);
+
+    jeu->colonne = -1;
+    jeu->tour = 0;
+    jeu->retour = 0;
+
+    jeu->rejouerPartie = 0;
+    jeu->retourAccueil = 0;
+    jeu->fin = 0;
+}
 
 // corp du jeu
 void fonctionJeu(InfoFenetre* fenetre, FILE* fDebug){
 
     // chargement des images
-    InfoJeu jeu
+    InfoJeu jeu;
     res_InfoJeu(&jeu);
 
-    Im_Images images; // voir image.h
-    resetImages(&images);
+    Image images; // voir image.h
 
-    fenetre.ecran = CHARGEMENT;
+    res_Image(&images, 0);
 
-    chargeSectionImage(-1, &images, pRenderer, fDebug); // charge 'CHARGEMENT'
-
-    afficheImage(images.autre.CHARGEMENT, [0, 0], NON, pRenderer, fDebug);
-
-    SDL_RenderPresent(pRenderer);
-
-    chargeSectionImage(1, &images, pRenderer, fDebug);
-
-    // ecran d'accueil
-    accueil(0, NULL, NULL, NULL, NULL, NULL, &images, pWindow, pRenderer, fDebug, fSauvegarde);
-
-
-
+    fenetre->ecran = LENCEMENT;
 
     while(1){ // jeu
 
-        // taille du renderer
-        int x = 0, y = 0;
-        SDL_GetRendererOutputSize(pRenderer, &x, &y);
+        res_InfoJeu(&jeu);
 
-        chargeSectionImage(1, &images, pRenderer, fDebug);
+        while(fenetre->ecran != JEU){
 
-        int retour = 0; // permet de revenir au tour precedent
-        int fin = 0;    /*
-                        -1 : egalite
-                        0 : pas termine
-                        1 : victoire du joueur 1
-                        2 : victoire du joueur 2
-                        3 : victoire du joueur 3
-                        */
+            affichage(&images, &jeu, fenetre, fDebug);
 
-        int rejouerPartie = 0, retourAccueil = 0;
-
-    	   // ecran de choix des modes
-        accueil(1, &mode, &joueurCommence, &difficulteBot1, &difficulteBot2, &hardcore, &images, pWindow, pRenderer, fDebug, fSauvegarde);
-
-        afficheImage(images.autre.CHARGEMENT, [0, 0], NON, pRenderer, fDebug);
-
-        SDL_RenderPresent(pRenderer);
+            evenement(&images, &jeu, fenetre, fDebug);
+        }
 
         do// une partie
         {
+            res_InfoPartie(&jeu);
+
+            if(jeu.mode != 3 && jeu.joueurCommence == 3)
+                jeu.joueurCommence = 1;
+
+            jeu.joueur = jeu.joueurCommence;
+
+            while(jeu.fin == 0 && jeu.rejouerPartie == 0 && jeu.retourAccueil == 0){
+
+                affichage(&images, &jeu, fenetre, fDebug);
+
+                evenement(&images, &jeu, fenetre, fDebug);
 
 
-            chargeSectionImage(2, &images, pRenderer, fDebug);
-
-            rejouerPartie = 0;
-            retourAccueil = 0;
-
-            fin = 0;
-            tour = 0;
-
-            if(mode != 3 && joueurCommence == 3)
-                joueurCommence = 1;
-
-            joueur = joueurCommence;
-
-            resetGrille(grille);// reset la grille
-
-
-            do// un tour
-            {
                 sprintf(debugTexte[0].txt,"=--=--= GENERAL =--=--=");
-
-                sprintf(debugTexte[1].txt,"mode séléctionné: %d", mode);
-
-                sprintf(debugTexte[2].txt,"tour actuel: %d", tour);
-
-            	   // temps limite selon le mode hardcore
-            	   if(hardcore.mode == 1)
-            	       hardcore.tempsRestant = 10;
-            	   else if(hardcore.mode == 2)
-            	       hardcore.tempsRestant = 3;
+                sprintf(debugTexte[1].txt,"mode séléctionné: %d", jeu.mode);
+                sprintf(debugTexte[2].txt,"tour actuel: %d", jeu.tour);
 
 
-                    if(retour == 0) // permet au retour de fonctionner. si retour = 1 alors on ne sauvegarde pas la grille qui vien d'etre jouer et on charge la précédente.
-                        sauvegardeGrille(tour, joueur, grille, fDebug, fSauvegarde); // sauvegarde de la grille actuelle
-
-                    retour = 0; // reset de retour
-
-
-                    // affichage du jeu
-                    affiche(NULL, mode, joueur, tour, -1, grille, &images, pRenderer, fDebug); // affichage du jeu
-
-                    afficheHardcore(&hardcore, &images, pRenderer, fDebug); // affiche du mode hardcore
-
-                    afficheImage(images.autre.croix, [x - 50, 0], NON, pRenderer, fDebug);
-
-                    SDL_RenderPresent(pRenderer);
-
-
-
-
-                    do// selection de la colonne a jouer
-                    {
-            	   	   // le joueur joue
-                        if(mode == 1 || (mode == 2 && joueur == 1) || mode == 3)
-                        {
-                            jouerColonne(mode, &joueurCommence, tour, joueur, grille, &hardcore, &colonne, &retour, &rejouerPartie, &retourAccueil, &Images, pWindow, pRenderer, fDebug, fSauvegarde);
-
-                        }
-                        else// le bot joue
-                        {
-                            if(mode == 2 && joueur == 2)
-                            {
-                                colonne = bot(2, difficulteBot1, grille, &stratBot1);
-
-                            }
-
-                            else if(mode == 4 && joueur == 1)
-                            {
-                                colonne = bot(1, difficulteBot1, grille, &stratBot1);
-
-                            }
-                            else if(mode == 4 && joueur == 2)
-                            {
-                                colonne = bot(2, difficulteBot2, grille, &stratBot2);
-
-                            }
-
-                            sprintf(debugTexte[4].txt, "=--=--= Bot =--=--=");
-
-                            sprintf(debugTexte[5].txt, "strat choisie: bot 1: c: %d l: %d type: %d", stratBot1.colonne, stratBot1.ligne, stratBot1.type);
-
-                            for(int temps = 0; (temps < 1000) && (retour == 0) && (rejouerPartie == 0) && (retourAccueil == 0); temps += 17)// rajoute du realisme en faisant attendre 1 seconde
-                                {
-                                    if(temps < 500) // affiche le pion en haut de la grille
-                                        affiche(0, mode, joueur, tour, -1, grille, &images, pRenderer, fDebug);
-                                    else // fait tomber le pion
-                                        affiche(0, mode, joueur, tour, colonne, grille, &images, pRenderer, fDebug);
-
-                                    afficheImage(images.autre.croix, [x - 50, 0], pRenderer, fDebug);
-
-                                    afficheImage(images.menu.menu_logo, [75, 75], OUI, pRenderer, fDebug);// logo du menu
-
-                                    SDL_RenderPresent(pRenderer);
-
-                                    SDL_Delay(17);
-
-                                    eventBot(&rejouerPartie, &retourAccueil, &hardcore, mode, joueur, tour, &retour, &joueurCommence, grille, &Images, pWindow, pRenderer, fDebug, fSauvegarde);
-
-                                }
+                if(jeu.hardcore.mode){
+                    if((SDL_GetTicks() - images.image[hardcore_bg].temps) > 1000){
+                        jeu.hardcore.tempsRestant--;
+                        if(jeu.hardcore.tempsRestant == 0){ // ici info sert a savoir si l'image est visible
+                            jeu.colonne = (rand() % 7);
                         }
 
-
-
-                    }while((retour == 0) && (rejouerPartie == 0) && (retourAccueil == 0) && (placePion(joueur, colonne, mode, tour, &rejouerPartie, &retourAccueil, &joueurCommence, &hardcore, grille, &Images, pWindow, pRenderer, fDebug, fSauvegarde))/* verifie que le pion est joue*/);
-
-
-            	   colonne = -1; // reset de colonne
-
-            	   // changement de joueur
-            	   if((mode != 3 && joueur == 1) || (mode == 3 && (joueur == 1 || joueur == 2)))
-            	   {
-            	   	   joueur++;
-            	   }
-            	   else
-            	   {
-            	   	   joueur = 1;
-            	   }
-
-
-            	   if(retour)
-            	   {
-            	   	   recupereGrille(&tour, &joueur, grille, &images, pWindow, pRenderer, fDebug, fSauvegarde);// charge la grille du tour precedent
-            	   }
-
-
-            	   fin = aligne4(grille, mode); // cherche un puissance 4 et renvoi le joueur gagnant
-
-                    tour++;
-
-            	   // verifie s'il y a egalite
-            	   if((mode != 3 && tour == 42) || (mode == 3 && tour == 72))
-            	   {
-            	   	   fin = -1;
-            	   }
-
-            }while(fin == 0 && rejouerPartie == 0 && retourAccueil == 0); // tour
-
-
-            if(rejouerPartie == 0 && retourAccueil == 0)// si la fin n'a pas ete choisie dans le menu
-            {
-                afficheFin(1, fin, joueur, mode, tour, &rejouerPartie, &retourAccueil, &hardcore, &joueurCommence, grille, &Images, pWindow, pRenderer, fDebug, fSauvegarde);// affichage de la fin
-
-                if(rejouerPartie == 0 && retourAccueil == 0)// si la fin n'a pas ete choisie dans le menu
-                {
-                    finPartie(&rejouerPartie, &hardcore, fin, mode, joueur, &joueurCommence, grille, &images, pWindow, pRenderer, fDebug, fSauvegarde);// menu de fin
+                        images.image[hardcore_bg].temps = SDL_GetTicks();
+                    }
                 }
+
+
+                if((jeu.mode == 2 && jeu.joueur == 2) || jeu.mode == 4)// le bot joue
+                {
+                    if(jeu.mode == 2 && jeu.joueur == 2){
+                        bot(&jeu.bot1, &jeu);
+                    }
+                    else{
+                        if(jeu.joueur == 1){
+                            bot(&jeu.bot1, &jeu);
+                        }
+                        else{
+                            bot(&jeu.bot2, &jeu);
+                        }
+                    }
+
+                    sprintf(debugTexte[4].txt, "=--=--= Bot =--=--=");
+
+                    sprintf(debugTexte[5].txt, "strat choisie: bot 1: c: %d l: %d type: %d", jeu.bot1.strat.colonne, jeu.bot1.strat.ligne, jeu.bot1.strat.type);
+
+                    /*
+                    for(int temps = 0; (temps < 1000) && (retour == 0) && (rejouerPartie == 0) && (retourAccueil == 0); temps += 17)// rajoute du realisme en faisant attendre 1 seconde
+                        {
+                            if(temps < 500) // affiche le pion en haut de la grille
+                                affiche(0, mode, joueur, tour, -1, grille, &images, pRenderer, fDebug);
+                            else // fait tomber le pion
+                                affiche(0, mode, joueur, tour, colonne, grille, &images, pRenderer, fDebug);
+
+                            afficheImage(images.autre.croix, [x - 50, 0], pRenderer, fDebug);
+
+                            afficheImage(images.menu.menu_logo, [75, 75], OUI, pRenderer, fDebug);// logo du menu
+
+                            SDL_RenderPresent(pRenderer);
+
+                            SDL_Delay(17);
+
+                            eventBot(&rejouerPartie, &retourAccueil, &hardcore, mode, joueur, tour, &retour, &joueurCommence, grille, &Images, pWindow, pRenderer, fDebug, fSauvegarde);
+
+                        }
+                    */
+                }
+
+                if(jeu.colonne != -1){ // la colonne a été joué
+                    placePion(&jeu, fenetre);
+
+                    jeu.tour++;
+
+                    // res du temps limite selon le mode hardcore
+                    if(jeu.hardcore.mode == 1)
+                        jeu.hardcore.tempsRestant = 10;
+                    else if(jeu.hardcore.mode == 2)
+                        jeu.hardcore.tempsRestant = 3;
+
+
+                    if(jeu.retour){
+                        recupereGrille(&images, &jeu, fenetre, fDebug);// charge la grille du tour precedent
+                    }
+                    else{
+                        sauvegardeGrille(&jeu, fDebug); // sauvegarde de la grille actuelle
+                    }
+
+                    jeu.retour = 0; // reset de retour
+
+
+                    jeu.colonne = -1;
+
+                    // changement de joueur
+                    if((jeu.mode != 3 && jeu.joueur == 1) || (jeu.mode == 3 && (jeu.joueur == 1 || jeu.joueur == 2))){
+                        jeu.joueur++;
+                    }
+                    else{
+                        jeu.joueur = 1;
+                    }
+
+                    aligne4(jeu.grille, &jeu); // cherche un puissance 4 et renvoi le joueur gagnant
+
+                    // verifie s'il y a egalite
+
+                    if((jeu.mode != 3 && jeu.tour == 42) || (jeu.mode == 3 && jeu.tour == 72)){
+                        jeu.fin = -1;
+                    }
+                }
+
             }
 
+            fenetre->fin = 1;
 
-            // clear du fichiers de sauvegarde
-            fclose(fSauvegarde);
-            remove("./data/sauvegarde.txt");
+            while(jeu.rejouerPartie == 0 && jeu.retourAccueil == 0){// si la fin n'a pas ete choisie dans le menu
+                //afficheFin(1, jeu.fin, jeu.joueur, jeu.mode, jeu.tour, jeu.rejouerPartie, jeu.retourAcceuil, jeu.hardcore, jeu.joueurCommence, jeu.grille, images, pWindow, pRenderer, fDebug, fSauvegarde);// affichage de la fin
+                affichage(&images, &jeu, fenetre, fDebug);
 
-            if((fSauvegarde = fopen("./data/sauvegarde.txt","w+")) == NULL)
-            {
-                fprintf(fDebug, "ERREUR: impossible d'ouvrir le fichier 'fSauvegarde.txt'");
-                exit(-1);
+                evenement(&images, &jeu, fenetre, fDebug);
             }
 
-        }while(rejouerPartie);// partie
-
-        afficheImage(images.autre.CHARGEMENT,  [0, 0], NON, pRenderer, fDebug);
-
-        SDL_RenderPresent(pRenderer);
-
+        }while(jeu.rejouerPartie);
 
     }// jeux
 }

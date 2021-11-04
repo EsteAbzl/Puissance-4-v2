@@ -14,12 +14,12 @@
 
 
 typedef enum Section{
-    AUTRE, ACCUEIL, JEU
+    S_AUTRE, S_ACCUEIL, S_JEU
 }Section;
 
 
 typedef enum Centre{
-    OUI = 2, NON = 0
+    OUI = 1, NON = 0
 }Centre;
 
 
@@ -160,7 +160,8 @@ typedef struct InfoImage{
     SDL_Texture* pTexture;
     char localisation[100]; //localisation est la l'emplacement de l'image a charger dans les fichiers
 
-    int temps;  // permet de faire des animations
+    unsigned int temps;  // permet de faire des animations
+    int info;   // permet de garder divers info
 } InfoImage;
 
 typedef struct Image{       // structure qui stoque les données des images en mémoire
@@ -171,11 +172,11 @@ typedef struct Image{       // structure qui stoque les données des images en m
 
 
 void Image_localisation(Image* images); // attribue la localisation de chaques images
-void res_Image(Image* images);
+void res_Image(Image* images, int decharge);
 
 void chargeSectionImage(Section section, Image* images, SDL_Renderer* pRenderer, FILE* fDebug);     // charge une section d'image en mémoire
 void chargeImage(InfoImage* image, SDL_Renderer* pRenderer, FILE* fDebug);                          // charge une image en mémoire
 void supprimeTexture(SDL_Texture* pTexture);                                                        // supprime (si elle existe) la texture demande
-void afficheImage(SDL_Texture* pTexture, int* coordonnee, Centre centre, SDL_Renderer* pRenderer, FILE* fDebug);    // affiche une image (peut être centrée)
+void afficheImage(InfoImage image, int x, int y, Centre centrer, SDL_Renderer* pRenderer, FILE* fDebug);    // affiche une image (peut être centrée)
 
 #endif // ABZ_IMAGE

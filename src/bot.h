@@ -28,25 +28,25 @@ typedef struct BlkList{
 
 
 // choisit une colonne de differentes façons selon la difficultee
-int bot(int bot, int difficulte, caseGrille grille[9][9], strat *stratActive);
+void bot(Bot* info_bot, InfoJeu* jeu);
 
 // verifie les puissance 3: *xxx / xxx*
-int aligne3(int bot, caseGrille grille[9][9], blkList blacklist[7]);
+int aligne3(int bot, CaseGrille grille[9][9], BlkList blacklist[7]);
 /*
 // verifie s'il y a un trou dans un puissance 4: x*xx / xx*x
-int aligneEntre(int bot, caseGrille grille[9][9], blkList blacklist[7]);
+int aligneEntre(int bot, CaseGrille grille[9][9], BlkList blacklist[7]);
 // verifie des cas qui ont la meme priorite que 'aligne3'
-int casAPart(int bot, caseGrille grille[9][9], blkList blacklist[7]);
+int casAPart(int bot, CaseGrille grille[9][9], BlkList blacklist[7]);
 // verifie les puissance 2: *xx- / -xx*
 */
-int aligne2(int bot, caseGrille grille[9][9], blkList blacklist[7]);
+int aligne2(int bot, CaseGrille grille[9][9], BlkList blacklist[7]);
 
 // permet au bot de trouver une stratégie
-void trouveStrat(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *stratActive);
+void trouveStrat(int bot, CaseGrille grille[9][9], BlkList blacklist[7], Strat *stratActive);
 // permet au bot d'appliquer sa strategies
-int strategie(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *stratActive);
+int strategie(int bot, CaseGrille grille[9][9], BlkList blacklist[7], Strat *stratActive);
 // verifie que la stratégie est encore applicable
-int* checStrat(int bot, caseGrille grille[9][9], blkList blacklist[7], strat *stratActive, int *nombreErreur, int *erreur);
+int* checStrat(int bot, CaseGrille grille[9][9], BlkList blacklist[7], Strat *stratActive, int *nombreErreur, int *erreur);
 
 
 

@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1610845064 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.c
+1635959804 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.c
 	<SDL2/SDL.h>
 	<stdio.h>
 	<stdlib.h>
@@ -362,7 +362,7 @@
 	"begin_code.h"
 	"close_code.h"
 
-1635190959 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\debug.h
+1636041492 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\debug.h
 	<SDL2/SDL.h>
 	<SDL2/SDL_ttf.h>
 
@@ -371,17 +371,20 @@
 	"begin_code.h"
 	"close_code.h"
 
-1635199429 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.h
+1635958140 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\action.h
 	"jeu.h"
+	"video.h"
 	"image.h"
 
-1635284965 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\jeu.h
+1636054756 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\jeu.h
+	<SDL2/SDL.h>
+	"video.h"
+	"image.h"
+
+1636049150 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.h
 	<SDL2/SDL.h>
 
-1635779841 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.h
-	<SDL2/SDL.h>
-
-1635777872 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.h
+1636039558 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.h
 	"jeu.h"
 	"image.h"
 
@@ -392,48 +395,54 @@
 	<stdlib.h>
 	"debug.h"
 
-1627491172 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.c
+1636055963 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.c
 	<SDL2/SDL.h>
 	<stdio.h>
 	<stdlib.h>
+	"debug.h"
 	"event.h"
 	"action.h"
 
-1598180417 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.h
+1635958203 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\event.h
 	<SDL2/SDL.h>
 	"jeu.h"
+	"video.h"
 	"image.h"
 
-1609769608 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\grille.c
+1636054515 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\grille.c
 	<stdlib.h>
 	<stdio.h>
 	<string.h>
 	<time.h>
+	"debug.h"
 	"grille.h"
 	"video.h"
 	"image.h"
 	"jeu.h"
 
-1609769652 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\grille.h
+1636054233 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\grille.h
 	"jeu.h"
+	"video.h"
 	"image.h"
 
 1597579306 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\icon.rc
 
-1622721492 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.c
+1636050908 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\image.c
 	<SDL2/SDL.h>
 	<SDL2/SDL_image.h>
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
+	"debug.h"
 	"image.h"
 
-1561870398 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_image.h
+1561866798 d:\users\programation\c\projets\puissance4\puissance 4 v2\include\sdl2\sdl_image.h
 	"SDL.h"
 	"SDL_version.h"
 	"begin_code.h"
 	"close_code.h"
 
-1625095229 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\jeu.c
+1636055043 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\jeu.c
 	<SDL2/SDL.h>
 	<stdio.h>
 	<stdlib.h>
@@ -445,10 +454,10 @@
 	"image.h"
 	"event.h"
 
-1635194589 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.h
+1636039974 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.h
 	"jeu.h"
 
-1635166576 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.c
+1635958026 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.c
 	<SDL2/SDL_ttf.h>
 	<stdio.h>
 	<stdlib.h>
@@ -457,9 +466,9 @@
 	"main.h"
 	"video.h"
 
-1610842102 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.h
+1610838502 d:\users\programation\c\projets\puissance4\puissance 4 v2\src\main.h
 
-1635164512 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.c
+1636039919 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\bot.c
 	<stdio.h>
 	<string.h>
 	<math.h>
@@ -469,7 +478,7 @@
 	"jeu.h"
 	"debug.h"
 
-1635165739 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.c
+1636056126 source:d:\users\programation\c\projets\puissance4\puissance 4 v2\src\video.c
 	<SDL2/SDL.h>
 	<stdio.h>
 	<stdlib.h>

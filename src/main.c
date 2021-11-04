@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     /*---*/
 
 
-    fenetre(fDebug, fSauvegarde);// ouvre la fenetre et fait lien avec le corp du jeu
+    initFenetre(fDebug);// ouvre la fenetre et fait lien avec le corp du jeu
 
     return 10;
 
