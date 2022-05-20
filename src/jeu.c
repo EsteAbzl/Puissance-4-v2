@@ -145,7 +145,7 @@ void fonctionJeu(InfoFenetre* fenetre, FILE* fDebug){
 
 
                 sprintf(debugTexte[0].txt,"=--=--= GENERAL =--=--=");
-                sprintf(debugTexte[1].txt,"mode séléctionné: %d", jeu.mode);
+                sprintf(debugTexte[3].txt,"mode séléctionné: %d", jeu.mode);
                 sprintf(debugTexte[2].txt,"tour actuel: %d", jeu.tour);
 
 

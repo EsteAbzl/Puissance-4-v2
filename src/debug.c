@@ -19,6 +19,9 @@ void debugWindow_Init()
     dWindowW = 500;
     dWindowH = 300;
 
+    fps = 0;
+    T_fps = 0;
+
     debugWindow = SDL_CreateWindow("Debug Window", dWindowX, dWindowY, dWindowW, dWindowH, SDL_WINDOW_ALWAYS_ON_TOP|SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
     if(debugWindow == NULL)
     {

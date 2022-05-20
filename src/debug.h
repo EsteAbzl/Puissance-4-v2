@@ -40,11 +40,14 @@ SDL_Color noir;
 int showDebugWindow;
 int dWindowX, dWindowY, dWindowW, dWindowH;
 
+int fps, T_fps;
+
 typedef struct Texte{
     char txt[100];
 } Texte;
 
 Texte debugTexte[100];
+
 
 #define DEBUG(probleme) fprintf(fDebug, "ERREUR : %s", probleme);\
                         fclose(fDebug);\

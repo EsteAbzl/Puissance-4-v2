@@ -133,10 +133,6 @@ void affichage(Image* images, InfoJeu* jeu, InfoFenetre* fenetre, FILE* fDebug){
         afficheImage(image[accueil_bg], 0, 0, NON, pRenderer, fDebug);
     }
 
-    if(fenetre->ecran == ACCUEIL_MENU || fenetre->ecran == ACCUEIL_BOT){
-        afficheImage(image[parametre_logo], 50, 50, OUI, pRenderer, fDebug);
-    }
-
     switch(fenetre->ecran){
         case LENCEMENT:{
                 // animation de clignotement
@@ -237,6 +233,10 @@ void affichage(Image* images, InfoJeu* jeu, InfoFenetre* fenetre, FILE* fDebug){
                 if(jeu->tour){
                     afficheImage(image[jeu_retour], fenetre->w/2 - 650, fenetre->h/2, OUI, pRenderer, fDebug);
                 }
+
+                if(fenetre->menu == 0 && fenetre->fin == 0){
+                    afficheImage(image[menu_logo], 50, 50, OUI, pRenderer, fDebug);
+                }
             }
             break;
     }
@@ -274,9 +274,21 @@ void affichage(Image* images, InfoJeu* jeu, InfoFenetre* fenetre, FILE* fDebug){
         afficheImage(image[joueur1Commence_actif + (jeu->joueurCommence - 1)], fenetre->w/2 - 360, fenetre->h*9/16 - 98 + ((jeu->joueurCommence-1)*125), OUI, pRenderer, fDebug);
     }
 
+
+    if(fenetre->ecran == ACCUEIL_MENU || fenetre->ecran == ACCUEIL_BOT || fenetre->menu || fenetre->fin){
+        afficheImage(image[parametre_logo], 50, 50, OUI, pRenderer, fDebug);
+    }
     afficheImage(image[croix], fenetre->w - 50, 0, NON, pRenderer, fDebug);
 
     SDL_Delay(17);
+    fps++;
+
+    if((SDL_GetTicks() - T_fps) > 1000){
+        sprintf(debugTexte[1].txt,"fps: %d", fps);
+        T_fps = SDL_GetTicks();
+        fps = 0;
+    }
+
 
     SDL_RenderPresent(pRenderer);
     debugWindow_Affiche();

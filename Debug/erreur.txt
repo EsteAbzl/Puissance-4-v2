@@ -1,13 +1,2 @@
-0001060, 790ERREUR : 
-760, 790ERREUR : 
-01160, 790ERREUR : 
-01060, 690ERREUR : 
-0860, 790ERREUR : 
-0760, 690ERREUR : 
-01160, 690ERREUR : 
-01060, 590ERREUR : 
-01160, 590ERREUR : 
-01060, 490ERREUR : 
-01160, 490ERREUR : 
-Rapport de fin TTF: ÿ%V¦ 
-Rapport de fin SDL: Invalid texture 
+Rapport de fin TTF: ÿ%–¥ 
+Rapport de fin SDL:  
