@@ -58,11 +58,7 @@ puissance 4.depend
 *.cbp
 *.save
 *.o
-erreur.txt
+*.layout
 data\sauvegarde.txt
-Debug/erreur.txt
 data/sauvegarde.txt
-Debug/erreur.txt
-*.o
-Debug/src/bot.o
-Debug/erreur.txt
+./Debug/erreur.txt

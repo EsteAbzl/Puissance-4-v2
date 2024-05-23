@@ -1,2 +1,1 @@
-Rapport de fin TTF: ÿ%–¥ 
-Rapport de fin SDL:  
+Erreur: creation de pSprite de './data/fin/texte/fin_LE.png' (Couldn't open ./data/fin/texte/fin_LE.png)
